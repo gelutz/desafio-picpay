@@ -1,6 +1,6 @@
-package com.demo.lutzapi.repositories;
+package com.lutzapi.repositories;
 
-import com.demo.lutzapi.domain.user.User;
+import com.lutzapi.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

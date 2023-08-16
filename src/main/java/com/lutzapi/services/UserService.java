@@ -1,12 +1,10 @@
-package com.demo.lutzapi.services;
+package com.lutzapi.services;
 
-import com.demo.lutzapi.domain.user.User;
-import com.demo.lutzapi.domain.user.UserType;
-import com.demo.lutzapi.dtos.UserDTO;
-import com.demo.lutzapi.repositories.UserRepository;
+import com.lutzapi.domain.user.User;
+import com.lutzapi.domain.user.UserType;
+import com.lutzapi.dtos.UserDTO;
+import com.lutzapi.repositories.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

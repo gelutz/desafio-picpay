@@ -1,4 +1,4 @@
-package com.demo.lutzapi.domain.user;
+package com.lutzapi.domain.user;
 
 public enum UserType {
     BUYER,

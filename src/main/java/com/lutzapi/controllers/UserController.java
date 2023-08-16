@@ -1,17 +1,13 @@
-package com.demo.lutzapi.controllers;
+package com.lutzapi.controllers;
 
-import com.demo.lutzapi.domain.user.User;
-import com.demo.lutzapi.dtos.UserDTO;
-import com.demo.lutzapi.repositories.UserRepository;
-import com.demo.lutzapi.services.UserService;
+import com.lutzapi.domain.user.User;
+import com.lutzapi.dtos.UserDTO;
+import com.lutzapi.services.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
-import java.net.http.HttpResponse;
 import java.util.List;
 
 @RestController

@@ -1,6 +1,6 @@
-package com.demo.lutzapi.dtos;
+package com.lutzapi.dtos;
 
-import com.demo.lutzapi.domain.user.UserType;
+import com.lutzapi.domain.user.UserType;
 
 import java.math.BigDecimal;
 

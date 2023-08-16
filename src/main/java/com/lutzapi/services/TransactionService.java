@@ -1,12 +1,11 @@
-package com.demo.lutzapi.services;
+package com.lutzapi.services;
 
-import com.demo.lutzapi.domain.transaction.Transaction;
-import com.demo.lutzapi.domain.user.User;
-import com.demo.lutzapi.dtos.TransactionDTO;
-import com.demo.lutzapi.repositories.TransactionRepository;
-import com.demo.lutzapi.repositories.UserRepository;
+import com.lutzapi.domain.transaction.Transaction;
+import com.lutzapi.domain.user.User;
+import com.lutzapi.dtos.TransactionDTO;
+import com.lutzapi.repositories.TransactionRepository;
+import com.lutzapi.repositories.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
