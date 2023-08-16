@@ -4,6 +4,8 @@ import com.demo.lutzapi.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity(name = "transactions")
 @Table(name = "transactions")
 @Getter
@@ -23,4 +25,6 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name="sellerId")
     private User seller;
+
+    private BigDecimal amount;
 }
