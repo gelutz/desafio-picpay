@@ -27,7 +27,7 @@ public class TransactionService {
     final RestTemplate restTemplate = new RestTemplate();
     final String apiUrl = "https://run.mocky.io/v3/8fafdd68-a090-496f-8c9a-3442cf30dae6";
 
-    public void createTransaction(TransactionDTO transaction) throws Exception {
+    public Transaction createTransaction(TransactionDTO transaction) throws Exception {
         User buyer = userRepository.findById(transaction.buyerId())
                 .orElseThrow(() -> new Exception("Usuário não encontrado"));
         User seller = userRepository.findById(transaction.sellerId())
@@ -46,6 +46,8 @@ public class TransactionService {
         userRepository.save(buyer);
         userRepository.save(seller);
         transactionRepository.save(newTransaction);
+
+        return newTransaction;
     }
 
     public void validateTransaction(User buyer, BigDecimal amount) throws Exception {
