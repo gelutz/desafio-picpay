@@ -1,6 +1,6 @@
-package com.lutzapi.domain.transaction;
+package com.lutzapi.domain.entities.transaction;
 
-import com.lutzapi.domain.user.User;
+import com.lutzapi.domain.entities.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 

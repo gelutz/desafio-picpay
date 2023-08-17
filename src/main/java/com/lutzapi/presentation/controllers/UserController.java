@@ -1,8 +1,8 @@
-package com.lutzapi.controllers;
+package com.lutzapi.presentation.controllers;
 
-import com.lutzapi.domain.user.User;
-import com.lutzapi.dtos.UserDTO;
-import com.lutzapi.services.UserService;
+import com.lutzapi.domain.entities.user.User;
+import com.lutzapi.application.dtos.UserDTO;
+import com.lutzapi.application.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

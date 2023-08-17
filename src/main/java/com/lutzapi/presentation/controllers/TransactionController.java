@@ -1,8 +1,8 @@
-package com.lutzapi.controllers;
+package com.lutzapi.presentation.controllers;
 
-import com.lutzapi.domain.transaction.Transaction;
-import com.lutzapi.dtos.TransactionDTO;
-import com.lutzapi.services.TransactionService;
+import com.lutzapi.domain.entities.transaction.Transaction;
+import com.lutzapi.application.dtos.TransactionDTO;
+import com.lutzapi.application.services.TransactionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

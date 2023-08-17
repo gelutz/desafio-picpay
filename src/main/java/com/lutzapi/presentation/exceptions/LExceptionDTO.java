@@ -1,4 +1,4 @@
-package com.lutzapi.dtos;
+package com.lutzapi.presentation.exceptions;
 
 public record LExceptionDTO(String message, int code) {
 }

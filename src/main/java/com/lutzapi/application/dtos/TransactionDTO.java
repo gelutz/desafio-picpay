@@ -1,4 +1,4 @@
-package com.lutzapi.dtos;
+package com.lutzapi.application.dtos;
 
 import java.math.BigDecimal;
 

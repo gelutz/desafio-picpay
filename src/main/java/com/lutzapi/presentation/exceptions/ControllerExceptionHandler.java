@@ -1,6 +1,5 @@
-package com.lutzapi.advices;
+package com.lutzapi.presentation.exceptions;
 
-import com.lutzapi.dtos.LExceptionDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +10,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ControllerExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<LExceptionDTO> handleDuplicateEntry(DataIntegrityViolationException divException) {
-        divException.printStackTrace();
-        LExceptionDTO lexception = new LExceptionDTO(divException.getMessage(), 401);
+    public ResponseEntity<LExceptionDTO> handleDuplicateEntry(DataIntegrityViolationException exception) {
+        exception.printStackTrace();
+        LExceptionDTO lexception = new LExceptionDTO(exception.getMessage(), 401);
 
         return ResponseEntity.badRequest().body(lexception);
     }

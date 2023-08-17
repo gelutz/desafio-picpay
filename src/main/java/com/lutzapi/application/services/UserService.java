@@ -1,9 +1,9 @@
-package com.lutzapi.services;
+package com.lutzapi.application.services;
 
-import com.lutzapi.domain.user.User;
-import com.lutzapi.domain.user.UserType;
-import com.lutzapi.dtos.UserDTO;
-import com.lutzapi.repositories.UserRepository;
+import com.lutzapi.domain.entities.user.User;
+import com.lutzapi.domain.entities.user.UserType;
+import com.lutzapi.application.dtos.UserDTO;
+import com.lutzapi.infrastructure.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

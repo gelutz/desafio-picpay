@@ -1,4 +1,4 @@
-package com.lutzapi.domain.user;
+package com.lutzapi.domain.entities.user;
 
 import jakarta.persistence.*;
 import lombok.*;

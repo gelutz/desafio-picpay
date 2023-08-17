@@ -1,10 +1,10 @@
-package com.lutzapi.services;
+package com.lutzapi.application.services;
 
-import com.lutzapi.domain.transaction.Transaction;
-import com.lutzapi.domain.user.User;
-import com.lutzapi.dtos.TransactionDTO;
-import com.lutzapi.repositories.TransactionRepository;
-import com.lutzapi.repositories.UserRepository;
+import com.lutzapi.domain.entities.transaction.Transaction;
+import com.lutzapi.domain.entities.user.User;
+import com.lutzapi.application.dtos.TransactionDTO;
+import com.lutzapi.infrastructure.repositories.TransactionRepository;
+import com.lutzapi.infrastructure.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
