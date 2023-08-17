@@ -27,20 +27,14 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    public void saveUser(User user) {
-        userRepository.save(user);
-    }
-    public void lowerUserBalance(User user, BigDecimal amount) throws Exception {
-
-        user.setBalance(user.getBalance().subtract(amount));
-    }
-
     public void validateTransaction(User buyer, BigDecimal amount) throws Exception {
         if (buyer.getType() == UserType.SELLER) {
+            // TODO: Alterar essa Exception para uma mais específica
             throw new Exception("Usuários do tipo SELLER não podem enviar transações");
         }
 
         if (buyer.getBalance().compareTo(amount) < 0) {
+            // TODO: Alterar essa Exception para uma mais específica
             throw new Exception("Saldo insuficiente");
         }
     }

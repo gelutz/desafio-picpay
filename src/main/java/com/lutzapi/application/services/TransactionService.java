@@ -26,8 +26,10 @@ public class TransactionService {
 
     public Transaction createTransaction(TransactionDTO transaction) throws Exception {
         User buyer = userRepository.findById(transaction.buyerId())
+                // TODO: Alterar essa Exception para uma mais específica
                 .orElseThrow(() -> new Exception("Usuário não encontrado"));
         User seller = userRepository.findById(transaction.sellerId())
+                // TODO: Alterar essa Exception para uma mais específica
                 .orElseThrow(() -> new Exception("Usuário não encontrado"));
 
         validateTransaction(buyer, transaction.amount());
@@ -54,6 +56,7 @@ public class TransactionService {
         ResponseEntity<MockyTransactionDTO> response = api.call();
 
         if (response.getStatusCode() != HttpStatus.OK) {
+            // TODO: Alterar essa Exception para uma mais específica
             throw new Exception("Erro na transação");
         }
 
@@ -61,6 +64,7 @@ public class TransactionService {
         assert response.getBody() != null;
 
         if (!response.getBody().message().equals("Autorizado")) {
+            // TODO: Alterar essa Exception para uma mais específica
             throw new Exception("Você não está autorizado");
         }
     }
