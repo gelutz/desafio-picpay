@@ -3,16 +3,17 @@ package com.lutzapi.application.services;
 import com.lutzapi.domain.entities.transaction.Transaction;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.application.dtos.TransactionDTO;
+import com.lutzapi.infrastructure.adapters.ApiAdapter;
+import com.lutzapi.infrastructure.adapters.MockyAdapter;
+import com.lutzapi.infrastructure.dtos.MockyTransactionDTO;
 import com.lutzapi.infrastructure.repositories.TransactionRepository;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 @Service
 // essa anotação do lombok cria um constructor com os campos que não são final
@@ -22,9 +23,6 @@ public class TransactionService {
     private UserRepository userRepository;
     private TransactionRepository transactionRepository;
     private UserService userService;
-
-    final RestTemplate restTemplate = new RestTemplate();
-    final String apiUrl = "https://run.mocky.io/v3/8fafdd68-a090-496f-8c9a-3442cf30dae6";
 
     public Transaction createTransaction(TransactionDTO transaction) throws Exception {
         User buyer = userRepository.findById(transaction.buyerId())
@@ -52,15 +50,17 @@ public class TransactionService {
     public void validateTransaction(User buyer, BigDecimal amount) throws Exception {
         userService.validateTransaction(buyer, amount);
 
-        ResponseEntity<Map> response = restTemplate
-                .getForEntity(apiUrl, Map.class);
+        ApiAdapter api = new MockyAdapter();
+        ResponseEntity<MockyTransactionDTO> response = api.call();
 
         if (response.getStatusCode() != HttpStatus.OK) {
             throw new Exception("Erro na transação");
         }
 
-        // se o retorno for OK vai ter mensagem
-        if (!response.getBody().get("message").toString().equals("Autorizado")) {
+        // se a resposta for OK vai ter body e mensagem
+        assert response.getBody() != null;
+
+        if (!response.getBody().message().equals("Autorizado")) {
             throw new Exception("Você não está autorizado");
         }
     }
