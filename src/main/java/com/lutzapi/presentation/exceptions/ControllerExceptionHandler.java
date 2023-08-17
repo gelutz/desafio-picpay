@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ControllerExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<LExceptionDTO> handleDuplicateEntry(DataIntegrityViolationException exception) {
+    public ResponseEntity<ExceptionResponseDTO> handleDuplicateEntry(DataIntegrityViolationException exception) {
+        // TODO: adicionar um logger de verdade
         exception.printStackTrace();
-        LExceptionDTO lexception = new LExceptionDTO(exception.getMessage(), 401);
-
-        return ResponseEntity.badRequest().body(lexception);
+        return ResponseEntity.badRequest()
+                .body(new ExceptionResponseDTO(exception.getMessage()));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -23,10 +23,10 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<LExceptionDTO> handleDefaultException(Exception exception) {
+    public ResponseEntity<ExceptionResponseDTO> handleDefaultException(Exception exception) {
+        // TODO: adicionar um logger de verdade
         exception.printStackTrace();
-        LExceptionDTO lException = new LExceptionDTO(exception.getMessage(), 500);
-
-        return ResponseEntity.internalServerError().body(lException);
+        return ResponseEntity.internalServerError()
+                .body(new ExceptionResponseDTO(exception.getMessage()));
     }
 }

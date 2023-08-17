@@ -3,6 +3,7 @@ package com.lutzapi.presentation.controllers;
 import com.lutzapi.domain.entities.transaction.Transaction;
 import com.lutzapi.application.dtos.TransactionDTO;
 import com.lutzapi.application.services.TransactionService;
+import com.lutzapi.presentation.exceptions.ExceptionResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,8 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @PostMapping
-    public ResponseEntity<Transaction> createTransaction(@RequestBody TransactionDTO transaction) {
-        try {
+    public ResponseEntity<Transaction> createTransaction(@RequestBody TransactionDTO transaction) throws Exception {
             Transaction newTransactioon = transactionService.createTransaction(transaction);
             return new ResponseEntity<>(newTransactioon, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 }

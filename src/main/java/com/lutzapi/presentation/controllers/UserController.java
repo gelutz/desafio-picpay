@@ -18,24 +18,13 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<User>> list() {
-        try {
-            List<User> users = userService.getAllUsers();
-
-            return new ResponseEntity<>(users, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        List<User> users = userService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @PostMapping()
     public ResponseEntity<User> create(@RequestBody UserDTO user) {
-        try {
-            User createdUser = userService.createUser(user);
-
-            return new ResponseEntity<>(createdUser, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        User createdUser = userService.createUser(user);
+        return new ResponseEntity<>(createdUser, HttpStatus.OK);
     }
 }
