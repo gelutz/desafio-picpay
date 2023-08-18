@@ -1,6 +1,7 @@
-package com.lutzapi.infrastructure.adapters;
+package com.lutzapi.application.adapters;
 
-import com.lutzapi.infrastructure.dtos.MockyTransactionDTO;
+import com.lutzapi.application.dtos.MockyTransactionDTO;
+import com.lutzapi.application.interfaces.ApiAdapter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

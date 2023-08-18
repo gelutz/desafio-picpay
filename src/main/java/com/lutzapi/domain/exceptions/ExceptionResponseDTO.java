@@ -1,4 +1,4 @@
-package com.lutzapi.presentation.exceptions;
+package com.lutzapi.domain.exceptions;
 
 public record ExceptionResponseDTO(String message)  {
 }

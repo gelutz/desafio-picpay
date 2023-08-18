@@ -4,6 +4,8 @@ import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserType;
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.infrastructure.repositories.UserRepository;
+import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
+import com.lutzapi.domain.exceptions.user.WrongUserTypeException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,15 +29,13 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    public void validateTransaction(User buyer, BigDecimal amount) throws Exception {
+    public void validateTransaction(User buyer, BigDecimal amount) throws WrongUserTypeException, InsufficientFundsException {
         if (buyer.getType() == UserType.SELLER) {
-            // TODO: Alterar essa Exception para uma mais específica
-            throw new Exception("Usuários do tipo SELLER não podem enviar transações");
+            throw new WrongUserTypeException(buyer.getId());
         }
 
         if (buyer.getBalance().compareTo(amount) < 0) {
-            // TODO: Alterar essa Exception para uma mais específica
-            throw new Exception("Saldo insuficiente");
+            throw new InsufficientFundsException(buyer.getId());
         }
     }
 

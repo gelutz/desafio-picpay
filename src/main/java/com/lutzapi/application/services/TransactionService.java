@@ -3,11 +3,14 @@ package com.lutzapi.application.services;
 import com.lutzapi.domain.entities.transaction.Transaction;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.application.dtos.TransactionDTO;
-import com.lutzapi.infrastructure.adapters.ApiAdapter;
-import com.lutzapi.infrastructure.adapters.MockyAdapter;
-import com.lutzapi.infrastructure.dtos.MockyTransactionDTO;
+import com.lutzapi.application.interfaces.ApiAdapter;
+import com.lutzapi.application.adapters.MockyAdapter;
+import com.lutzapi.application.dtos.MockyTransactionDTO;
+import com.lutzapi.domain.exceptions.mocky.MockyAuthException;
+import com.lutzapi.domain.exceptions.mocky.MockyDefaultExceptin;
 import com.lutzapi.infrastructure.repositories.TransactionRepository;
 import com.lutzapi.infrastructure.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,11 +29,10 @@ public class TransactionService {
 
     public Transaction createTransaction(TransactionDTO transaction) throws Exception {
         User buyer = userRepository.findById(transaction.buyerId())
-                // TODO: Alterar essa Exception para uma mais específica
-                .orElseThrow(() -> new Exception("Usuário não encontrado"));
+                .orElseThrow(EntityNotFoundException::new);
         User seller = userRepository.findById(transaction.sellerId())
                 // TODO: Alterar essa Exception para uma mais específica
-                .orElseThrow(() -> new Exception("Usuário não encontrado"));
+                .orElseThrow(EntityNotFoundException::new);
 
         validateTransaction(buyer, transaction.amount());
 
@@ -56,8 +58,7 @@ public class TransactionService {
         ResponseEntity<MockyTransactionDTO> response = api.call();
 
         if (response.getStatusCode() != HttpStatus.OK) {
-            // TODO: Alterar essa Exception para uma mais específica
-            throw new Exception("Erro na transação");
+            throw new MockyDefaultExceptin("Erro na transação");
         }
 
         // se a resposta for OK vai ter body e mensagem
@@ -65,7 +66,7 @@ public class TransactionService {
 
         if (!response.getBody().message().equals("Autorizado")) {
             // TODO: Alterar essa Exception para uma mais específica
-            throw new Exception("Você não está autorizado");
+            throw new MockyAuthException("Você não está autorizado");
         }
     }
 }

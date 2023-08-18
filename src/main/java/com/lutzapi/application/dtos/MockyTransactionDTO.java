@@ -1,4 +1,6 @@
-package com.lutzapi.infrastructure.dtos;
+package com.lutzapi.application.dtos;
+
+import com.lutzapi.application.interfaces.ApiDTO;
 
 public record MockyTransactionDTO(String message) implements ApiDTO {
     @Override

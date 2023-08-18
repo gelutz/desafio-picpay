@@ -3,7 +3,6 @@ package com.lutzapi.presentation.controllers;
 import com.lutzapi.domain.entities.transaction.Transaction;
 import com.lutzapi.application.dtos.TransactionDTO;
 import com.lutzapi.application.services.TransactionService;
-import com.lutzapi.presentation.exceptions.ExceptionResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

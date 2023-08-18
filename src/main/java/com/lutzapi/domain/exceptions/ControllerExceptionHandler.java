@@ -1,9 +1,12 @@
-package com.lutzapi.presentation.exceptions;
+package com.lutzapi.domain.exceptions;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
@@ -18,15 +21,18 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Void> handleEntityNotFound() {
-        return ResponseEntity.notFound().build();
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public void handleEntityNotFound(EntityNotFoundException exception) {
+        // TODO: adicionar um logger de verdade
+        exception.printStackTrace();
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionResponseDTO> handleDefaultException(Exception exception) {
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public ExceptionResponseDTO handleDefaultException(Exception exception) {
         // TODO: adicionar um logger de verdade
         exception.printStackTrace();
-        return ResponseEntity.internalServerError()
-                .body(new ExceptionResponseDTO(exception.getMessage()));
+        return new ExceptionResponseDTO(exception.getMessage());
     }
 }

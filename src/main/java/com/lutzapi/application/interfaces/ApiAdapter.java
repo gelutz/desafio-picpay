@@ -1,6 +1,6 @@
-package com.lutzapi.infrastructure.adapters;
+package com.lutzapi.application.interfaces;
 
-import com.lutzapi.infrastructure.dtos.ApiDTO;
+import com.lutzapi.application.interfaces.ApiDTO;
 import org.springframework.http.ResponseEntity;
 
 public interface ApiAdapter {
