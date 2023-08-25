@@ -31,7 +31,6 @@ public class TransactionService {
         User buyer = userRepository.findById(transaction.buyerId())
                 .orElseThrow(EntityNotFoundException::new);
         User seller = userRepository.findById(transaction.sellerId())
-                // TODO: Alterar essa Exception para uma mais específica
                 .orElseThrow(EntityNotFoundException::new);
 
         validateTransaction(buyer, transaction.amount());
@@ -65,7 +64,6 @@ public class TransactionService {
         assert response.getBody() != null;
 
         if (!response.getBody().message().equals("Autorizado")) {
-            // TODO: Alterar essa Exception para uma mais específica
             throw new MockyAuthException("Você não está autorizado");
         }
     }
