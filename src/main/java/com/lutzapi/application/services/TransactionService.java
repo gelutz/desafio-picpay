@@ -27,7 +27,7 @@ public class TransactionService {
     private TransactionRepository transactionRepository;
     private UserService userService;
 
-    public Transaction createTransaction(TransactionDTO transaction) throws Exception {
+    public Transaction createTransaction(TransactionDTO transaction) {
         User buyer = userRepository.findById(transaction.buyerId())
                 .orElseThrow(EntityNotFoundException::new);
         User seller = userRepository.findById(transaction.sellerId())
@@ -50,8 +50,8 @@ public class TransactionService {
         return newTransaction;
     }
 
-    public void validateTransaction(User buyer, BigDecimal amount) throws Exception {
-        userService.validateTransaction(buyer, amount);
+    public void validateTransaction(User buyer, BigDecimal amount) {
+        userService.validateUserForTransaction(buyer, amount);
 
         ApiAdapter api = new MockyAdapter();
         ResponseEntity<MockyTransactionDTO> response = api.call();
