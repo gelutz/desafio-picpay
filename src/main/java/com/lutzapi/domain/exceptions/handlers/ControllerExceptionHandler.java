@@ -1,25 +1,22 @@
-package com.lutzapi.domain.exceptions;
+package com.lutzapi.domain.exceptions.handlers;
 
+import com.lutzapi.domain.exceptions.LutzExceptionResponse;
 import jakarta.persistence.EntityNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class ControllerExceptionHandler {
-    Logger LOGGER = LoggerFactory.getLogger(ControllerExceptionHandler.class);
+public class ControllerExceptionHandler extends LutzExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ExceptionResponseDTO handleDuplicateEntry(DataIntegrityViolationException exception) {
-        ExceptionResponseDTO novaException = new ExceptionResponseDTO(exception.getMessage());
+    public LutzExceptionResponse handleDuplicateEntry(DataIntegrityViolationException exception) {
+        LutzExceptionResponse novaException = new LutzExceptionResponse(exception.getMessage());
         externalLog(novaException);
         return novaException;
     }
@@ -33,13 +30,9 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    public ExceptionResponseDTO handleDefaultException(Exception exception) {
-        ExceptionResponseDTO novaException = new ExceptionResponseDTO(exception.getMessage());
+    public LutzExceptionResponse handleDefaultException(Exception exception) {
+        LutzExceptionResponse novaException = new LutzExceptionResponse(exception.getMessage());
         externalLog(novaException);
         return novaException;
-    }
-
-    private void externalLog(Exception exception) {
-        LOGGER.error("-x-x ERRO: " + exception.getClass().getName(), exception);
     }
 }
