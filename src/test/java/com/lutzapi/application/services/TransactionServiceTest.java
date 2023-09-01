@@ -3,33 +3,24 @@ package com.lutzapi.application.services;
 import com.lutzapi.application.adapters.MockyAdapter;
 import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.application.dtos.TransactionDTO;
-import com.lutzapi.application.dtos.UserDTO;
-import com.lutzapi.application.interfaces.ApiAdapter;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserType;
-import com.lutzapi.domain.exceptions.mocky.MockyAuthException;
 import com.lutzapi.domain.exceptions.mocky.MockyDefaultExceptin;
 import com.lutzapi.domain.exceptions.user.MissingInfoException;
 import com.lutzapi.infrastructure.repositories.TransactionRepository;
 import com.lutzapi.infrastructure.repositories.UserRepository;
-import com.sun.jdi.ObjectReference;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @SpringBootTest
 public class TransactionServiceTest {

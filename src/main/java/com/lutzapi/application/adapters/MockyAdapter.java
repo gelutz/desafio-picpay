@@ -24,6 +24,7 @@ public class MockyAdapter implements ApiAdapter {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public ResponseEntity<MockyTransactionDTO> call() {
         return template.getForEntity(url, MockyTransactionDTO.class);
     }
