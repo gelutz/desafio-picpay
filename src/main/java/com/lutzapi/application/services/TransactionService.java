@@ -8,15 +8,19 @@ import com.lutzapi.application.adapters.MockyAdapter;
 import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.domain.exceptions.mocky.MockyAuthException;
 import com.lutzapi.domain.exceptions.mocky.MockyDefaultExceptin;
+import com.lutzapi.domain.exceptions.user.MissingInfoException;
 import com.lutzapi.infrastructure.repositories.TransactionRepository;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 // essa anotação do lombok cria um constructor com os campos que não são final
@@ -26,8 +30,16 @@ public class TransactionService {
     private UserRepository userRepository;
     private TransactionRepository transactionRepository;
     private UserService userService;
+    private MockyAdapter apiAdapter;
 
     public Transaction createTransaction(TransactionDTO transaction) {
+        List<String> emptyFields = new ArrayList<>();
+        if (transaction.buyerId() == null) emptyFields.add("Buyer ID");
+        if (transaction.sellerId() == null) emptyFields.add("Seller ID");
+        if (transaction.amount() == null) emptyFields.add("Amount");
+
+        if (!emptyFields.isEmpty()) throw new MissingInfoException(emptyFields);
+
         User buyer = userRepository.findById(transaction.buyerId())
                 .orElseThrow(EntityNotFoundException::new);
         User seller = userRepository.findById(transaction.sellerId())
@@ -53,15 +65,12 @@ public class TransactionService {
     public void validateTransaction(User buyer, BigDecimal amount) {
         userService.validateUserForTransaction(buyer, amount);
 
-        ApiAdapter api = new MockyAdapter();
-        ResponseEntity<MockyTransactionDTO> response = api.call();
+        ResponseEntity<MockyTransactionDTO> response = apiAdapter.call();
 
-        if (response.getStatusCode() != HttpStatus.OK) {
+        if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
             throw new MockyDefaultExceptin("Erro na transação");
         }
 
-        // se a resposta for OK vai ter body e mensagem
-        assert response.getBody() != null;
 
         if (!response.getBody().message().equals("Autorizado")) {
             throw new MockyAuthException("Você não está autorizado");
