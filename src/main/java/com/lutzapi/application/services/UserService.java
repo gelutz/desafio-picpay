@@ -3,7 +3,7 @@ package com.lutzapi.application.services;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserType;
 import com.lutzapi.application.dtos.UserDTO;
-import com.lutzapi.domain.exceptions.user.MissingInfoException;
+import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.domain.exceptions.user.WrongUserTypeException;
@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,7 @@ public class UserService {
         if (StringUtils.isEmpty(user.document())) emptyFields.add("Document");
         if (user.type() == null) emptyFields.add("Document");
 
-        if (!emptyFields.isEmpty()) throw new MissingInfoException(emptyFields);
+        if (!emptyFields.isEmpty()) throw new MissingDataException(emptyFields);
 
         User newUser = new User();
         newUser.setFirstName(user.firstName());

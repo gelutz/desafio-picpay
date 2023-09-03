@@ -4,7 +4,7 @@ import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserType;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
-import com.lutzapi.domain.exceptions.user.MissingInfoException;
+import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.domain.exceptions.user.WrongUserTypeException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -31,7 +31,7 @@ public class UserServiceTest {
     @Test
     public void itThrowsWhenMissingData() {
         UserDTO user = Mockito.mock(UserDTO.class); // all fields are null
-        Assertions.assertThrows(MissingInfoException.class, () -> sut.createUser(user));
+        Assertions.assertThrows(MissingDataException.class, () -> sut.createUser(user));
     }
 
     @Test

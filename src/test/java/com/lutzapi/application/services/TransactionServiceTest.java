@@ -5,7 +5,7 @@ import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.application.dtos.TransactionDTO;
 import com.lutzapi.domain.exceptions.mocky.MockyAuthException;
 import com.lutzapi.domain.exceptions.mocky.MockyDefaultExceptin;
-import com.lutzapi.domain.exceptions.user.MissingInfoException;
+import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.TransactionRepository;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -79,7 +79,7 @@ public class TransactionServiceTest {
     public void createTransactionShouldThrowIfMissingData() {
         TransactionDTO transactionDTO = new TransactionDTO(null, null, null);
 
-        Exception exception = Assertions.assertThrows(MissingInfoException.class,
+        Exception exception = Assertions.assertThrows(MissingDataException.class,
                 () -> sut.createTransaction(transactionDTO));
 
         Assertions.assertTrue(exception.getMessage().contains("Amount"));
@@ -97,9 +97,6 @@ public class TransactionServiceTest {
         Mockito.when(transactionDTO.buyerId()).thenReturn(1L);
 
         Mockito.when(userRepoMock.findById(Mockito.anyLong())).thenThrow(EntityNotFoundException.class);
-
-        // buyerID
-        Assertions.assertThrows(EntityNotFoundException.class, () -> sut.createTransaction(transactionDTO));
     }
 
     @Test

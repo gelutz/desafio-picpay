@@ -33,4 +33,12 @@ public class User {
     private String password;
 
     private BigDecimal balance;
+
+    public void subtractBalance(BigDecimal amount) {
+        setBalance(getBalance().subtract(amount));
+    }
+
+    public void addBalance(BigDecimal amount) {
+        setBalance(getBalance().add(amount));
+    }
 }

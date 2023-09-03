@@ -7,7 +7,7 @@ import com.lutzapi.application.adapters.MockyAdapter;
 import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.domain.exceptions.mocky.MockyAuthException;
 import com.lutzapi.domain.exceptions.mocky.MockyDefaultExceptin;
-import com.lutzapi.domain.exceptions.user.MissingInfoException;
+import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.TransactionRepository;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,22 +35,27 @@ public class TransactionService {
         if (transaction.sellerId() == null) emptyFields.add("Seller ID");
         if (transaction.amount() == null) emptyFields.add("Amount");
 
-        if (!emptyFields.isEmpty()) throw new MissingInfoException(emptyFields);
+        if (!emptyFields.isEmpty()) throw new MissingDataException(emptyFields);
 
         User buyer = userRepository.findById(transaction.buyerId())
                 .orElseThrow(EntityNotFoundException::new);
         User seller = userRepository.findById(transaction.sellerId())
                 .orElseThrow(EntityNotFoundException::new);
 
-        validateTransaction(buyer, transaction.amount());
+        userService.validateUserForTransaction(buyer, transaction.amount());
+        validateTransaction();
 
+        return saveTransaction(buyer, seller, transaction);
+    }
+
+    public Transaction saveTransaction(User buyer, User seller, TransactionDTO transaction) {
         Transaction newTransaction = new Transaction();
         newTransaction.setBuyer(buyer);
         newTransaction.setSeller(seller);
         newTransaction.setAmount(transaction.amount());
 
-        buyer.setBalance(buyer.getBalance().subtract(transaction.amount()));
-        seller.setBalance(seller.getBalance().add(transaction.amount()));
+        buyer.subtractBalance(transaction.amount());
+        seller.addBalance(transaction.amount());
 
         userRepository.save(buyer);
         userRepository.save(seller);
@@ -60,9 +64,7 @@ public class TransactionService {
         return newTransaction;
     }
 
-    public void validateTransaction(User buyer, BigDecimal amount) {
-        userService.validateUserForTransaction(buyer, amount);
-
+    public void validateTransaction() {
         ResponseEntity<MockyTransactionDTO> response = apiAdapter.call();
 
         if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
