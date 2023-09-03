@@ -24,8 +24,6 @@ import java.math.BigDecimal;
 @SpringBootTest
 public class TransactionServiceTest {
     private TransactionService sut;
-    // TODO verificar o comportamento desses mocks criados com @Mock
-    // talvez não é criado um novo objeto para cada teste, pode causar falhas entre testes
     @Mock
     private UserRepository userRepoMock;
     @Mock
