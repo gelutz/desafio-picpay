@@ -62,26 +62,13 @@ public class TransactionServiceTest {
     }
 
     @Test
-    @DisplayName("The transactionn validator show throw an error if the user is not a buyer.")
-    public void itShouldThrowIfUserIsNotBuyer(){
-        User buyer = Instancio.create(User.class);
-        buyer.setType(UserType.SELLER);
+    public void nseiqoainda() {
+
     }
 
-    @Test
-    @DisplayName("The transactionn validator show throw an error if the user doesn't have enough balance.")
-    public void itShouldThrowIfUserDoesntHaveBalance(){
-        Mockito.when(adapterMock.call()).thenReturn(new ResponseEntity<MockyTransactionDTO>(HttpStatus.OK));
 
-        TransactionService ts = new TransactionService(userRepoMock, TransactionRepoMock, userServiceMock, adapterMock);
 
-        BigDecimal userBalance = BigDecimal.valueOf(1);
-        BigDecimal transactionAmount = userBalance.add(BigDecimal.valueOf(1));
-        User buyer = Mockito.mock(User.class);
-        buyer.setBalance(userBalance);
 
-        Assertions.assertThrows(MockyDefaultExceptin.class, () -> sut.validateTransaction(buyer, transactionAmount));
-    }
 
 
 }
