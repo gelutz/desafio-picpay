@@ -55,8 +55,6 @@ public class TransactionServiceTest {
         ResponseEntity<MockyTransactionDTO> mockedResponseEntity = new ResponseEntity<>(mockedDTO, HttpStatus.OK);
 
         Mockito.when(adapterMock.call()).thenReturn(mockedResponseEntity);
-        ResponseEntity<MockyTransactionDTO> result = adapterMock.call();
-
         Assertions.assertThrows(MockyAuthException.class, () -> sut.validateTransaction());
     }
 
