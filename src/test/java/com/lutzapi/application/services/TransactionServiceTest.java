@@ -77,8 +77,14 @@ public class TransactionServiceTest {
     @Test
     @DisplayName("Should throw If any data is missing (buyerId, sellerId, amount)")
     public void createTransactionShouldThrowIfMissingData() {
-        TransactionDTO transactionDTO = Mockito.mock(TransactionDTO.class);
-        Assertions.assertThrows(MissingInfoException.class, () -> sut.createTransaction(transactionDTO));
+        TransactionDTO transactionDTO = new TransactionDTO(null, null, null);
+
+        Exception exception = Assertions.assertThrows(MissingInfoException.class,
+                () -> sut.createTransaction(transactionDTO));
+
+        Assertions.assertTrue(exception.getMessage().contains("Amount"));
+        Assertions.assertTrue(exception.getMessage().contains("Buyer ID"));
+        Assertions.assertTrue(exception.getMessage().contains("Seller ID"));
     }
 
     // esse teste vai falhar quando a base for trocada de um H2 para uma com persistência
