@@ -3,6 +3,8 @@ package com.lutzapi.application.services;
 import com.lutzapi.application.adapters.MockyAdapter;
 import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.application.dtos.TransactionDTO;
+import com.lutzapi.domain.entities.transaction.Transaction;
+import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.exceptions.mocky.MockyAuthException;
 import com.lutzapi.domain.exceptions.mocky.MockyDefaultExceptin;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
@@ -21,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -41,7 +44,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw If any data is missing (buyerId, sellerId, amount)")
+    @DisplayName("Deve lançar uma MissingDataException com cada campo que falta (buyerId, sellerId, amount)")
     public void createTransactionShouldThrowIfMissingData() {
         TransactionDTO transactionDTO = new TransactionDTO(null, null, null);
 
@@ -53,15 +56,68 @@ public class TransactionServiceTest {
         Assertions.assertTrue(exception.getMessage().contains("Seller ID"));
     }
 
-    // esse teste vai falhar quando a base for trocada de um H2 para uma com persistência
-    // TODO descobrir como mockar o banco utilizado ou usar outra instância do H2
     @Test
+    @DisplayName("Deve lançar uma EntityNotFoundException se não encontrar o buyer ou o seller")
     public void createTransactionShouldThrowIfUsersNotFound() {
-        TransactionDTO transactionDTO = Mockito.mock(TransactionDTO.class);
-        Mockito.when(transactionDTO.amount()).thenReturn(BigDecimal.ONE);
-        Mockito.when(transactionDTO.sellerId()).thenReturn(1L);
-        Mockito.when(transactionDTO.buyerId()).thenReturn(1L);
+        TransactionDTO transactionDTO = new TransactionDTO(BigDecimal.ONE, 1L, 2L);
 
-        Mockito.when(userRepoMock.findById(Mockito.anyLong())).thenThrow(EntityNotFoundException.class);
+        Mockito.when(userRepoMock.findById(transactionDTO.buyerId())).thenThrow(EntityNotFoundException.class);
+        Mockito.when(userRepoMock.findById(transactionDTO.sellerId())).thenThrow(EntityNotFoundException.class);
+
+        Assertions.assertThrows(EntityNotFoundException.class, () -> userRepoMock.findById(transactionDTO.buyerId()));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> userRepoMock.findById(transactionDTO.sellerId()));
+    }
+
+    @Test
+    @DisplayName("Deve retornar nulo se a API não validar")
+    public void itShouldReturnNullIfNotValidated() {
+        TransactionDTO transactionDTO = new TransactionDTO(BigDecimal.ONE, 1L, 2L);
+
+        Mockito.when(userRepoMock.findById(transactionDTO.buyerId()))
+                .thenReturn(Optional.of(Mockito.mock(User.class)));
+        Mockito.when(userRepoMock.findById(transactionDTO.sellerId()))
+                .thenReturn(Optional.of(Mockito.mock(User.class)));
+        Mockito.when(adapterMock.call())
+                .thenReturn(new MockyTransactionDTO("Mocked message"));
+
+        Transaction response = sut.createTransaction(transactionDTO);
+
+        Assertions.assertNull(response);
+    }
+
+    @Test
+    @DisplayName("Deve salvar e retornar a transação")
+    public void itShouldSaveAndReturnTransaction() {
+        TransactionDTO transactionDTO = new TransactionDTO(BigDecimal.ONE, 1L, 2L);
+        User buyer = Mockito.mock(User.class);
+        User seller = Mockito.mock(User.class);
+        Mockito.when(buyer.getId()).thenReturn(transactionDTO.buyerId());
+        Mockito.when(buyer.getBalance()).thenReturn(transactionDTO.amount());
+        Mockito.when(seller.getId()).thenReturn(transactionDTO.sellerId());
+        Mockito.when(seller.getBalance()).thenReturn(transactionDTO.amount());
+
+        Transaction response = sut.saveTransaction(buyer, seller, transactionDTO);
+
+        Assertions.assertInstanceOf(Transaction.class, response);
+    }
+
+
+    // sem querer esse teste também testa a função saveTransaction
+    // TODO ver se tem o que fazer pra esse teste não testar a função saveTransaction
+    @Test
+    @DisplayName("Deve retornar uma transaction se a API validar")
+    public void itShouldReturnTransactionIfValidated() {
+        TransactionDTO transactionDTO = new TransactionDTO(BigDecimal.ONE, 1L, 2L);
+
+        Mockito.when(userRepoMock.findById(transactionDTO.buyerId()))
+                .thenReturn(Optional.of(Mockito.mock(User.class)));
+        Mockito.when(userRepoMock.findById(transactionDTO.sellerId()))
+                .thenReturn(Optional.of(Mockito.mock(User.class)));
+        Mockito.when(adapterMock.call())
+                .thenReturn(new MockyTransactionDTO("Autorizado"));
+
+        Transaction response = sut.createTransaction(transactionDTO);
+
+        Assertions.assertInstanceOf(Transaction.class, response);
     }
 }

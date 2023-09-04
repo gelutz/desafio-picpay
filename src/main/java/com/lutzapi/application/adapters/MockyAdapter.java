@@ -14,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 
 
 @Getter
-@Setter
 @AllArgsConstructor
 @Component
 public class MockyAdapter implements ApiAdapter {
