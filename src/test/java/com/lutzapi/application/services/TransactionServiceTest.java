@@ -41,38 +41,6 @@ public class TransactionServiceTest {
     }
 
     @Test
-    @DisplayName("Caso dê algum problema com a Mocky API e não retornar status code 200")
-    public void validationShouldThrowIfErrorInTransaction(){
-        MockyTransactionDTO mockedDTO = new MockyTransactionDTO("Mocked message");
-        ResponseEntity<MockyTransactionDTO> mockedResponseEntity = new ResponseEntity<>(mockedDTO, HttpStatus.BAD_REQUEST);
-
-        Mockito.when(adapterMock.call()).thenReturn(mockedResponseEntity);
-        Assertions.assertThrows(MockyDefaultExceptin.class, () -> sut.validateTransaction());
-    }
-
-    @Test
-    @DisplayName("Deve lançar o erro MockyAuthException se não houver 'Autorizado' no response")
-    public void validationShouldThrowIfNotAuthorized(){
-        MockyTransactionDTO mockedDTO = new MockyTransactionDTO("Mocked message");
-        ResponseEntity<MockyTransactionDTO> mockedResponseEntity = new ResponseEntity<>(mockedDTO, HttpStatus.OK);
-
-        Mockito.when(adapterMock.call()).thenReturn(mockedResponseEntity);
-        Assertions.assertThrows(MockyAuthException.class, () -> sut.validateTransaction());
-    }
-
-    @Test
-    @DisplayName("Não deve acontecer nada caso o usuário esteja autorizado")
-    public void validationShouldPassIfAuthorized(){
-        MockyTransactionDTO mockedDTO = new MockyTransactionDTO("Autorizado");
-        ResponseEntity<MockyTransactionDTO> mockedResponseEntity = new ResponseEntity<>(mockedDTO, HttpStatus.OK);
-
-        Mockito.when(adapterMock.call()).thenReturn(mockedResponseEntity);
-
-        sut.validateTransaction();
-        Mockito.verify(adapterMock, Mockito.times(1)).call();
-    }
-
-    @Test
     @DisplayName("Should throw If any data is missing (buyerId, sellerId, amount)")
     public void createTransactionShouldThrowIfMissingData() {
         TransactionDTO transactionDTO = new TransactionDTO(null, null, null);
@@ -96,15 +64,4 @@ public class TransactionServiceTest {
 
         Mockito.when(userRepoMock.findById(Mockito.anyLong())).thenThrow(EntityNotFoundException.class);
     }
-
-    @Test
-    public void nseiqoainda() {
-
-    }
-
-
-
-
-
-
 }

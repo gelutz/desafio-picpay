@@ -43,9 +43,12 @@ public class TransactionService {
                 .orElseThrow(EntityNotFoundException::new);
 
         userService.validateUserForTransaction(buyer, transaction.amount());
-        validateTransaction();
 
-        return saveTransaction(buyer, seller, transaction);
+        if (validateTransaction()) {
+            return saveTransaction(buyer, seller, transaction);
+        }
+
+        return null;
     }
 
     public Transaction saveTransaction(User buyer, User seller, TransactionDTO transaction) {
@@ -64,16 +67,8 @@ public class TransactionService {
         return newTransaction;
     }
 
-    public void validateTransaction() {
-        ResponseEntity<MockyTransactionDTO> response = apiAdapter.call();
-
-        if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
-            throw new MockyDefaultExceptin("Erro na transação");
-        }
-
-
-        if (!response.getBody().message().equals("Autorizado")) {
-            throw new MockyAuthException("Você não está autorizado");
-        }
+    public boolean validateTransaction() {
+        MockyTransactionDTO response = apiAdapter.call();
+        return response.message().equals("Autorizado");
     }
 }
