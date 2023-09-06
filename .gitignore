@@ -1,5 +1,4 @@
 src/main/resources/log/*
-src/main/resources/database/*
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
