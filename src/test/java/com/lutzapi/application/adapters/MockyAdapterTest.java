@@ -1,12 +1,14 @@
 package com.lutzapi.application.adapters;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.domain.exceptions.mocky.MockyAuthException;
 import com.lutzapi.domain.exceptions.mocky.MockyDefaultExceptin;
 import com.lutzapi.infrastructure.repositories.templates.RestTemplate;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +32,10 @@ public class MockyAdapterTest {
         MockyTransactionDTO mockedDTO = new MockyTransactionDTO("Mocked message");
         ResponseEntity<MockyTransactionDTO> mockedResponseEntity = new ResponseEntity<>(mockedDTO, HttpStatus.BAD_REQUEST);
 
-        Mockito.when(templateMock.getForEntity(sut.getUrl(), MockyTransactionDTO.class))
+        when(templateMock.getForEntity(sut.getUrl(), MockyTransactionDTO.class))
                         .thenReturn(mockedResponseEntity);
 
-        Assertions.assertThrows(MockyDefaultExceptin.class, () -> sut.call());
+        assertThrows(MockyDefaultExceptin.class, () -> sut.call());
     }
 
     @Test
@@ -42,10 +44,10 @@ public class MockyAdapterTest {
         MockyTransactionDTO mockedDTO = new MockyTransactionDTO("Mocked message");
         ResponseEntity<MockyTransactionDTO> mockedResponseEntity = new ResponseEntity<>(mockedDTO, HttpStatus.OK);
 
-        Mockito.when(templateMock.getForEntity(sut.getUrl(), MockyTransactionDTO.class))
+        when(templateMock.getForEntity(sut.getUrl(), MockyTransactionDTO.class))
                 .thenReturn(mockedResponseEntity);
 
-        Assertions.assertThrows(MockyAuthException.class, () -> sut.call());
+        assertThrows(MockyAuthException.class, () -> sut.call());
     }
 
     @Test
@@ -54,10 +56,10 @@ public class MockyAdapterTest {
         MockyTransactionDTO mockedDTO = new MockyTransactionDTO("Autorizado");
         ResponseEntity<MockyTransactionDTO> mockedResponseEntity = new ResponseEntity<>(mockedDTO, HttpStatus.OK);
 
-        Mockito.when(templateMock.getForEntity(sut.getUrl(), MockyTransactionDTO.class))
+        when(templateMock.getForEntity(sut.getUrl(), MockyTransactionDTO.class))
                 .thenReturn(mockedResponseEntity);
 
         MockyTransactionDTO response = sut.call();
-        Assertions.assertEquals(mockedDTO.message(), response.message());
+        assertEquals(mockedDTO.message(), response.message());
     }
 }

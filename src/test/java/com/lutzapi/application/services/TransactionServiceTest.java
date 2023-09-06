@@ -1,5 +1,8 @@
 package com.lutzapi.application.services;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.lutzapi.application.adapters.MockyAdapter;
 import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.application.dtos.TransactionDTO;
@@ -9,12 +12,10 @@ import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.TransactionRepository;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -44,12 +45,12 @@ public class TransactionServiceTest {
     public void createTransactionShouldThrowIfMissingData() {
         TransactionDTO transactionDTO = new TransactionDTO(null, null, null);
 
-        Exception exception = Assertions.assertThrows(MissingDataException.class,
+        Exception exception = assertThrows(MissingDataException.class,
                 () -> sut.createTransaction(transactionDTO));
 
-        Assertions.assertTrue(exception.getMessage().contains("Amount"));
-        Assertions.assertTrue(exception.getMessage().contains("Buyer ID"));
-        Assertions.assertTrue(exception.getMessage().contains("Seller ID"));
+        assertTrue(exception.getMessage().contains("Amount"));
+        assertTrue(exception.getMessage().contains("Buyer ID"));
+        assertTrue(exception.getMessage().contains("Seller ID"));
     }
 
     @Test
@@ -57,11 +58,11 @@ public class TransactionServiceTest {
     public void createTransactionShouldThrowIfUsersNotFound() {
         TransactionDTO transactionDTO = new TransactionDTO(BigDecimal.ONE, 1L, 2L);
 
-        Mockito.when(userRepoMock.findById(transactionDTO.buyerId())).thenThrow(EntityNotFoundException.class);
-        Mockito.when(userRepoMock.findById(transactionDTO.sellerId())).thenThrow(EntityNotFoundException.class);
+        when(userRepoMock.findById(transactionDTO.buyerId())).thenThrow(EntityNotFoundException.class);
+        when(userRepoMock.findById(transactionDTO.sellerId())).thenThrow(EntityNotFoundException.class);
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> userRepoMock.findById(transactionDTO.buyerId()));
-        Assertions.assertThrows(EntityNotFoundException.class, () -> userRepoMock.findById(transactionDTO.sellerId()));
+        assertThrows(EntityNotFoundException.class, () -> userRepoMock.findById(transactionDTO.buyerId()));
+        assertThrows(EntityNotFoundException.class, () -> userRepoMock.findById(transactionDTO.sellerId()));
     }
 
     @Test
@@ -69,32 +70,32 @@ public class TransactionServiceTest {
     public void itShouldReturnNullIfNotValidated() {
         TransactionDTO transactionDTO = new TransactionDTO(BigDecimal.ONE, 1L, 2L);
 
-        Mockito.when(userRepoMock.findById(transactionDTO.buyerId()))
-                .thenReturn(Optional.of(Mockito.mock(User.class)));
-        Mockito.when(userRepoMock.findById(transactionDTO.sellerId()))
-                .thenReturn(Optional.of(Mockito.mock(User.class)));
-        Mockito.when(adapterMock.call())
+        when(userRepoMock.findById(transactionDTO.buyerId()))
+                .thenReturn(Optional.of(mock(User.class)));
+        when(userRepoMock.findById(transactionDTO.sellerId()))
+                .thenReturn(Optional.of(mock(User.class)));
+        when(adapterMock.call())
                 .thenReturn(new MockyTransactionDTO("Mocked message"));
 
         Transaction response = sut.createTransaction(transactionDTO);
 
-        Assertions.assertNull(response);
+        assertNull(response);
     }
 
     @Test
     @DisplayName("Deve salvar e retornar a transação")
     public void itShouldSaveAndReturnTransaction() {
         TransactionDTO transactionDTO = new TransactionDTO(BigDecimal.ONE, 1L, 2L);
-        User buyer = Mockito.mock(User.class);
-        User seller = Mockito.mock(User.class);
-        Mockito.when(buyer.getId()).thenReturn(transactionDTO.buyerId());
-        Mockito.when(buyer.getBalance()).thenReturn(transactionDTO.amount());
-        Mockito.when(seller.getId()).thenReturn(transactionDTO.sellerId());
-        Mockito.when(seller.getBalance()).thenReturn(transactionDTO.amount());
+        User buyer = mock(User.class);
+        User seller = mock(User.class);
+        when(buyer.getId()).thenReturn(transactionDTO.buyerId());
+        when(buyer.getBalance()).thenReturn(transactionDTO.amount());
+        when(seller.getId()).thenReturn(transactionDTO.sellerId());
+        when(seller.getBalance()).thenReturn(transactionDTO.amount());
 
         Transaction response = sut.saveTransaction(buyer, seller, transactionDTO);
 
-        Assertions.assertInstanceOf(Transaction.class, response);
+        assertInstanceOf(Transaction.class, response);
     }
 
 
@@ -105,15 +106,15 @@ public class TransactionServiceTest {
     public void itShouldReturnTransactionIfValidated() {
         TransactionDTO transactionDTO = new TransactionDTO(BigDecimal.ONE, 1L, 2L);
 
-        Mockito.when(userRepoMock.findById(transactionDTO.buyerId()))
-                .thenReturn(Optional.of(Mockito.mock(User.class)));
-        Mockito.when(userRepoMock.findById(transactionDTO.sellerId()))
-                .thenReturn(Optional.of(Mockito.mock(User.class)));
-        Mockito.when(adapterMock.call())
+        when(userRepoMock.findById(transactionDTO.buyerId()))
+                .thenReturn(Optional.of(mock(User.class)));
+        when(userRepoMock.findById(transactionDTO.sellerId()))
+                .thenReturn(Optional.of(mock(User.class)));
+        when(adapterMock.call())
                 .thenReturn(new MockyTransactionDTO("Autorizado"));
 
         Transaction response = sut.createTransaction(transactionDTO);
 
-        Assertions.assertInstanceOf(Transaction.class, response);
+        assertInstanceOf(Transaction.class, response);
     }
 }
