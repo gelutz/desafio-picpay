@@ -1,35 +1,47 @@
 package com.lutzapi.presentation.controllers;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.*;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import com.lutzapi.application.services.UserService;
+import com.lutzapi.domain.entities.user.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 public class UserControllerTest {
+    @MockBean
+    private UserService userService;
     @Autowired
     private MockMvc mockMvc;
 
-    @BeforeEach
-    void setUp() {}
-
     @Test
-    @DisplayName("The endpoint should return an empty list when there are no users")
     public void itShouldReturnAnEmptyArray() throws Exception {
-        mockMvc.perform(get("/users"))
-                .andDo(print())
+        this.mockMvc.perform(get("/users")).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
+
+    }
+
+    @Test
+    public void itShouldReturnAListOfUsers() throws Exception {
+        List<User> users = new ArrayList<>();
+        users.add(mock(User.class));
+        users.add(mock(User.class));
+
+        when(userService.getAllUsers()).thenReturn(users);
+        this.mockMvc.perform(get("/users")).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0]").isNotEmpty());
     }
 }
