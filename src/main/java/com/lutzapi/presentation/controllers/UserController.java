@@ -1,11 +1,10 @@
 package com.lutzapi.presentation.controllers;
 
-import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.application.services.UserService;
+import com.lutzapi.domain.entities.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,9 +22,10 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @PostMapping()
-    public ResponseEntity<User> create(@RequestBody UserDTO user) {
-        User createdUser = userService.createUser(user);
-        return new ResponseEntity<>(createdUser, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    @PostMapping
+    public User create(@RequestBody UserDTO user) {
+        return userService.createUser(user);
     }
 }
