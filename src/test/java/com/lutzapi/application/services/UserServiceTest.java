@@ -1,8 +1,5 @@
 package com.lutzapi.application.services;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserType;
@@ -19,6 +16,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -34,7 +35,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("The endpoint should return an empty list when there are no users")
+    @DisplayName("Should throw MissingDataException when there are missing fields (buyerID, sellerID or amount)")
     public void itThrowsWhenMissingData() {
         UserDTO user = mock(UserDTO.class); // all fields are null
         assertThrows(MissingDataException.class, () -> sut.createUser(user));
