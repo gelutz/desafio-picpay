@@ -1,6 +1,7 @@
 package com.lutzapi.domain.exceptions.handlers;
 
 import com.lutzapi.domain.exceptions.LutzExceptionResponse;
+import com.lutzapi.domain.exceptions.user.MissingDataException;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,34 +20,33 @@ public class ControllerExceptionHandler {
         LOGGER.error("\n-x-x ERRO: " + exception.getClass().getName(), exception);
     }
 
+    @ExceptionHandler(value = {RuntimeException.class, Exception.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public LutzExceptionResponse handle(Exception exception) {
+        externalLog(exception);
+        return new LutzExceptionResponse(exception.getMessage());
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public LutzExceptionResponse handleDuplicateEntry(DataIntegrityViolationException exception) {
+    public LutzExceptionResponse handle(DataIntegrityViolationException exception) {
         externalLog(exception);
         return new LutzExceptionResponse(exception.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public LutzExceptionResponse handleEntityNotFound(EntityNotFoundException exception) {
-        externalLog(exception);
-        return new LutzExceptionResponse(exception.getMessage());
-
-    }
-
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    public LutzExceptionResponse handleDefaultException(Exception exception) {
+    public LutzExceptionResponse handle(EntityNotFoundException exception) {
         externalLog(exception);
         return new LutzExceptionResponse(exception.getMessage());
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(MissingDataException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public LutzExceptionResponse handleDefaultException(RuntimeException exception) {
+    public LutzExceptionResponse handle(MissingDataException exception) {
         externalLog(exception);
         return new LutzExceptionResponse(exception.getMessage());
     }
