@@ -26,14 +26,15 @@ public class UserServiceTest {
 
     private UserService sut;
     @Mock
-    private UserRepository userRepository;
+    private UserRepository userRepoMock;
 
     @BeforeEach
     public void setUp() {
-        sut = new UserService(userRepository);
+        sut = new UserService(userRepoMock);
     }
 
     @Test
+    @DisplayName("The endpoint should return an empty list when there are no users")
     public void itThrowsWhenMissingData() {
         UserDTO user = mock(UserDTO.class); // all fields are null
         assertThrows(MissingDataException.class, () -> sut.createUser(user));
