@@ -64,10 +64,9 @@ public class UserControllerTest {
 
         String jsonUser = om.writeValueAsString(user);
 
-        when(userService.createUser(user)).thenThrow(MissingDataException.class);
         this.mockMvc.perform(post("/users")
                         .content(jsonUser)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isCreated());
     }
 }

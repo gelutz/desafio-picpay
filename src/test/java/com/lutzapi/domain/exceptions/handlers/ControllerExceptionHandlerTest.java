@@ -1,5 +1,6 @@
 package com.lutzapi.domain.exceptions.handlers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.application.services.UserService;
@@ -16,6 +17,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -34,18 +38,25 @@ public class ControllerExceptionHandlerTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(userController)
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(userController)
+                .setControllerAdvice(ControllerExceptionHandler.class)
                 .build();
     }
 
     @Test
     public void createUserException() throws Exception {
+        // por algum motivo precisa ser assim, usando Mockito.mock(UserDTO.class) o retorno do controller é 201 (wtf?)
         UserDTO user = new UserDTO(null, null, null, null, null, null);
+
+        List<String> emptyFields = new ArrayList<>();
+        emptyFields.add("Buyer ID");
+        emptyFields.add("Seller ID");
+        emptyFields.add("Amount");
+
+        when(userServiceMock.createUser(user)).thenThrow(new MissingDataException(emptyFields));
+
         ObjectMapper om = new ObjectMapper();
-
-        when(userServiceMock.createUser(user)).thenThrow(MissingDataException.class);
-
         mockMvc.perform(post("/users")
                         .content(om.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
