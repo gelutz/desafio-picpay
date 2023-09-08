@@ -16,7 +16,7 @@ public class ControllerExceptionHandler {
     Logger LOGGER = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     protected void externalLog(Exception exception) {
-        LOGGER.error("-x-x ERRO: " + exception.getClass().getName(), exception);
+        LOGGER.error("\n-x-x ERRO: " + exception.getClass().getName(), exception);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
