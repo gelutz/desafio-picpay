@@ -25,7 +25,7 @@ public class UserService {
         List<String> emptyFields = new ArrayList<>();
         if (StringUtils.isEmpty(user.firstName())) emptyFields.add("First name");
         if (StringUtils.isEmpty(user.document())) emptyFields.add("Document");
-        if (user.type() == null) emptyFields.add("Document");
+        if (user.type() == null) emptyFields.add("Type");
 
         if (!emptyFields.isEmpty()) throw new MissingDataException(emptyFields);
 
