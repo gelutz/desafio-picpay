@@ -7,6 +7,7 @@ import com.lutzapi.application.adapters.MockyAdapter;
 import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.domain.exceptions.mocky.MockyAuthException;
 import com.lutzapi.domain.exceptions.mocky.MockyDefaultExceptin;
+import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.TransactionRepository;
 import com.lutzapi.infrastructure.repositories.UserRepository;
@@ -38,9 +39,9 @@ public class TransactionService {
         if (!emptyFields.isEmpty()) throw new MissingDataException(emptyFields);
 
         User buyer = userRepository.findById(transaction.buyerId())
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Buyer ID", transaction.buyerId().toString()));
         User seller = userRepository.findById(transaction.sellerId())
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Seller ID", transaction.sellerId().toString()));
 
         userService.validateUserForTransaction(buyer, transaction.amount());
 
@@ -62,9 +63,7 @@ public class TransactionService {
 
         userRepository.save(buyer);
         userRepository.save(seller);
-        transactionRepository.save(newTransaction);
-
-        return newTransaction;
+        return transactionRepository.save(newTransaction);
     }
 
     public boolean validateTransaction() {
