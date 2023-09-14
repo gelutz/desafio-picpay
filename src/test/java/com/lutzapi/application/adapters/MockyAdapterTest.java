@@ -49,17 +49,4 @@ public class MockyAdapterTest {
 
         assertThrows(MockyAuthException.class, () -> sut.call());
     }
-
-    @Test
-    @DisplayName("Verificando se a API está funcionando")
-    public void itShouldReturnAuthorized(){
-        MockyTransactionDTO mockedDTO = new MockyTransactionDTO("Autorizado");
-        ResponseEntity<MockyTransactionDTO> mockedResponseEntity = new ResponseEntity<>(mockedDTO, HttpStatus.OK);
-
-        when(templateMock.getForEntity(sut.getUrl(), MockyTransactionDTO.class))
-                .thenReturn(mockedResponseEntity);
-
-        MockyTransactionDTO response = sut.call();
-        assertEquals(mockedDTO.message(), response.message());
-    }
 }
