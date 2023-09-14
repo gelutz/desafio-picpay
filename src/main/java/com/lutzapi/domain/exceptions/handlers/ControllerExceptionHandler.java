@@ -17,7 +17,11 @@ public class ControllerExceptionHandler {
     Logger LOGGER = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     protected void externalLog(Exception exception) {
-        LOGGER.error("\n-x-x ERRO: " + exception.getClass().getName(), exception);
+        LOGGER.error("\n"
+                + (new Date())
+                + "-x-x ERRO: "
+                + exception.getClass().getName());
+
     }
 
     @ExceptionHandler(value = {RuntimeException.class, Exception.class})
@@ -32,8 +36,10 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public LutzExceptionResponse handle(DataIntegrityViolationException exception) {
+        String responseMessage = "Já existe um usuário com esse DOCUMENT";
+
         externalLog(exception);
-        return new LutzExceptionResponse(exception.getMessage());
+        return new LutzExceptionResponse(responseMessage);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
