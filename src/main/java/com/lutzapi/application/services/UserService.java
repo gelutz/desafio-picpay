@@ -1,12 +1,12 @@
 package com.lutzapi.application.services;
 
+import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserType;
-import com.lutzapi.application.dtos.UserDTO;
-import com.lutzapi.domain.exceptions.user.MissingDataException;
-import com.lutzapi.infrastructure.repositories.UserRepository;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
+import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.domain.exceptions.user.WrongUserTypeException;
+import com.lutzapi.infrastructure.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -29,6 +29,7 @@ public class UserService {
 
         if (!emptyFields.isEmpty()) throw new MissingDataException(emptyFields);
 
+
         User newUser = new User();
         newUser.setFirstName(user.firstName());
         newUser.setLastName(user.lastName());
@@ -50,7 +51,7 @@ public class UserService {
         }
     }
 
-    public List<User> getAllUsers() {
+    public Iterable<User> getAllUsers() {
         return userRepository.findAll();
     }
 }
