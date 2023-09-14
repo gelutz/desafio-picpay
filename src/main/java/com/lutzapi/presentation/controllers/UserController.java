@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor
@@ -18,7 +16,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @GetMapping
-    public List<User> list() {
+    public Iterable<User> list() {
         return userService.getAllUsers();
     }
 
