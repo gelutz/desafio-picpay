@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Date;
 
@@ -52,5 +53,11 @@ public class ControllerExceptionHandler {
     public LutzExceptionResponse handle(MissingDataException exception) {
         externalLog(exception);
         return new LutzExceptionResponse(exception.getMessage(), null);
+    }
+
+    @ExceptionHandler(HttpClientErrorException.class)
+    public LutzExceptionResponse handle(HttpClientErrorException exception) {
+        externalLog(exception);
+        return new LutzExceptionResponse("API do Mocky retornou 404", null);
     }
 }
