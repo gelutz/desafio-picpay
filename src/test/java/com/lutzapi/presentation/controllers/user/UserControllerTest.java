@@ -1,10 +1,9 @@
-package com.lutzapi.presentation.controllers;
+package com.lutzapi.presentation.controllers.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.application.services.UserService;
 import com.lutzapi.domain.entities.user.User;
-import com.lutzapi.domain.exceptions.user.MissingDataException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,14 +45,21 @@ public class UserControllerTest {
     @Test
     @DisplayName("The endpoint should return a list of existing users")
     public void itShouldReturnAListOfUsers() throws Exception {
+        User mockUser1 = mock(User.class);
+        User mockUser2 = mock(User.class);
+        when(mockUser1.getId()).thenReturn(1L);
+        when(mockUser2.getId()).thenReturn(2L);
+
         List<User> users = new ArrayList<>();
-        users.add(mock(User.class));
-        users.add(mock(User.class));
+        users.add(mockUser1);
+        users.add(mockUser2);
 
         when(userService.getAllUsers()).thenReturn(users);
         this.mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0]").isNotEmpty());
+                .andExpect(jsonPath("$[0]").isNotEmpty())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[1].id").value(2));
     }
 
     @Test
