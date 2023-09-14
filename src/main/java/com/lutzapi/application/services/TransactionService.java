@@ -1,20 +1,15 @@
 package com.lutzapi.application.services;
 
-import com.lutzapi.domain.entities.transaction.Transaction;
-import com.lutzapi.domain.entities.user.User;
-import com.lutzapi.application.dtos.TransactionDTO;
 import com.lutzapi.application.adapters.MockyAdapter;
 import com.lutzapi.application.dtos.MockyTransactionDTO;
-import com.lutzapi.domain.exceptions.mocky.MockyAuthException;
-import com.lutzapi.domain.exceptions.mocky.MockyDefaultExceptin;
+import com.lutzapi.application.dtos.TransactionDTO;
+import com.lutzapi.domain.entities.transaction.Transaction;
+import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.TransactionRepository;
 import com.lutzapi.infrastructure.repositories.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

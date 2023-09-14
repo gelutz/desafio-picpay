@@ -2,12 +2,8 @@ package com.lutzapi.presentation.controllers.transaction;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lutzapi.application.dtos.TransactionDTO;
-import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.application.services.TransactionService;
-import com.lutzapi.application.services.UserService;
 import com.lutzapi.domain.entities.transaction.Transaction;
-import com.lutzapi.infrastructure.repositories.UserRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +19,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
