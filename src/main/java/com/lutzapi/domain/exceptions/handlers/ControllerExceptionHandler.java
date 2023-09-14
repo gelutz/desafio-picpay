@@ -1,6 +1,7 @@
 package com.lutzapi.domain.exceptions.handlers;
 
 import com.lutzapi.domain.exceptions.LutzExceptionResponse;
+import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ public class ControllerExceptionHandler {
     Logger LOGGER = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     protected void externalLog(Exception exception) {
-        LOGGER.error("\n" + (new Date()) + "-x-x ERRO: " + exception.getClass().getName());
+        LOGGER.error((new Date()) + "-x-x ERRO: " + exception.getClass().getName() + "\n");
     }
 
     @ExceptionHandler(value = {RuntimeException.class, Exception.class})
@@ -34,17 +35,15 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
     public LutzExceptionResponse handle(DataIntegrityViolationException exception) {
-        String message = "Já existe um usuário com esse DOCUMENT";
-
         externalLog(exception);
-        return new LutzExceptionResponse(message, null);
+        return new LutzExceptionResponse("Já existe um registro com essas informações.", null);
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public LutzExceptionResponse handle(EntityNotFoundException exception) {
+    public LutzExceptionResponse handle(NotFoundException exception) {
         externalLog(exception);
-        return new LutzExceptionResponse(exception.getMessage(), null);
+        return new LutzExceptionResponse("Não foi possível encontrar o registro com esse " + exception.getMessage(), exception.getKey());
     }
 
     @ExceptionHandler(MissingDataException.class)
