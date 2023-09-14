@@ -1,12 +1,9 @@
-package com.lutzapi.domain.exceptions.handlers;
+package com.lutzapi.presentation.controllers.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.application.services.UserService;
-import com.lutzapi.domain.entities.user.User;
-import com.lutzapi.domain.entities.user.UserType;
-import com.lutzapi.domain.exceptions.LutzExceptionResponse;
+import com.lutzapi.domain.exceptions.handlers.ControllerExceptionHandler;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.presentation.controllers.UserController;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,34 +11,32 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+// depois de alguns testes descobri que essa classe não testa o @ControllerAdvice
+@RestClientTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class ControllerExceptionHandlerTest {
+public class UserControllerExceptionTest {
     @Mock
-    private UserService userServiceMock; // é usado dentro do userController
+    private UserService userServiceMock;
+
     @InjectMocks
     private UserController userController;
     private MockMvc mockMvc;
@@ -71,17 +66,17 @@ public class ControllerExceptionHandlerTest {
         mockMvc.perform(post("/users")
                         .content(om.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString(emptyFields.get(0))))
+                .andExpect(content().string(containsString(emptyFields.get(1))))
+                .andExpect(content().string(containsString(emptyFields.get(2))));
 
         verify(userServiceMock, times(1)).createUser(user);
     }
 
     @Test
+    @DisplayName("DataIntegrityViolationException")
     public void itShouldNotCreateTwoUsersWithSameInfo() throws Exception {
-//        String email = "email@email.com";
-//        String document = "mockedDocument";
-//        UserDTO user = new UserDTO(null, null, email, document, UserType.BUYER, BigDecimal.ONE);
         UserDTO user = new UserDTO(null, null, null, null, null, null);
 
         when(userServiceMock.createUser(user))
@@ -92,8 +87,7 @@ public class ControllerExceptionHandlerTest {
                         .content(om.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
-
+                .andExpect(status().isConflict());
 
         verify(userServiceMock, times(1)).createUser(user);
     }
