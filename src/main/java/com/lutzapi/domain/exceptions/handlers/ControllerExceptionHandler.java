@@ -3,7 +3,6 @@ package com.lutzapi.domain.exceptions.handlers;
 import com.lutzapi.domain.exceptions.LutzExceptionResponse;
 import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
-import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
