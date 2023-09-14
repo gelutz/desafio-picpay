@@ -19,11 +19,7 @@ public class ControllerExceptionHandler {
     Logger LOGGER = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     protected void externalLog(Exception exception) {
-        LOGGER.error("\n"
-                + (new Date())
-                + "-x-x ERRO: "
-                + exception.getClass().getName());
-
+        LOGGER.error("\n" + (new Date()) + "-x-x ERRO: " + exception.getClass().getName());
     }
 
     @ExceptionHandler(value = {RuntimeException.class, Exception.class})
@@ -31,24 +27,24 @@ public class ControllerExceptionHandler {
     @ResponseBody
     public LutzExceptionResponse handle(Exception exception) {
         externalLog(exception);
-        return new LutzExceptionResponse(exception.getMessage());
+        return new LutzExceptionResponse(exception.getMessage(), null);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
     public LutzExceptionResponse handle(DataIntegrityViolationException exception) {
-        String responseMessage = "Já existe um usuário com esse DOCUMENT";
+        String message = "Já existe um usuário com esse DOCUMENT";
 
         externalLog(exception);
-        return new LutzExceptionResponse(responseMessage);
+        return new LutzExceptionResponse(message, null);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public LutzExceptionResponse handle(EntityNotFoundException exception) {
         externalLog(exception);
-        return new LutzExceptionResponse(exception.getMessage());
+        return new LutzExceptionResponse(exception.getMessage(), null);
     }
 
     @ExceptionHandler(MissingDataException.class)
@@ -56,6 +52,6 @@ public class ControllerExceptionHandler {
     @ResponseBody
     public LutzExceptionResponse handle(MissingDataException exception) {
         externalLog(exception);
-        return new LutzExceptionResponse(exception.getMessage());
+        return new LutzExceptionResponse(exception.getMessage(), null);
     }
 }
