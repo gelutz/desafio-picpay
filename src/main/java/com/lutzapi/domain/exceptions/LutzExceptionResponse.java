@@ -1,5 +1,5 @@
 package com.lutzapi.domain.exceptions;
 
 
-public record LutzExceptionResponse(String message) {
+public record LutzExceptionResponse(String message, String value) {
 }
