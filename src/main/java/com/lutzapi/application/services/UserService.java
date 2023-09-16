@@ -3,6 +3,7 @@ package com.lutzapi.application.services;
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserType;
+import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.domain.exceptions.user.WrongUserTypeException;
@@ -19,6 +20,11 @@ import java.util.List;
 @AllArgsConstructor
 public class UserService {
     private UserRepository userRepository;
+
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Buyer ID", id + ""));
+    }
 
     public User createUser(UserDTO user) {
 
