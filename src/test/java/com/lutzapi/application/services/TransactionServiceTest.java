@@ -29,7 +29,7 @@ public class TransactionServiceTest {
     @Mock
     private UserRepository userRepoMock;
     @Mock
-    private TransactionRepository TransactionRepoMock;
+    private TransactionRepository transactionRepoMock;
     @Mock
     private UserService userServiceMock;
     @Mock
@@ -37,16 +37,16 @@ public class TransactionServiceTest {
 
     @BeforeEach
     public void setUp() {
-        sut = new TransactionService(userRepoMock, TransactionRepoMock, userServiceMock, adapterMock);
+        sut = new TransactionService(userRepoMock, transactionRepoMock, userServiceMock, adapterMock);
     }
 
     @Test
     @DisplayName("Deve lançar uma MissingDataException com cada campo que falta (buyerId, sellerId, amount)")
-    public void createTransactionShouldThrowIfMissingData() {
+    public void itShouldThrowIfMissingData() {
         TransactionDTO transactionDTO = new TransactionDTO(null, null, null);
 
         Exception exception = assertThrows(MissingDataException.class,
-                () -> sut.createTransaction(transactionDTO));
+                () -> sut.validateTransactionFields(transactionDTO));
 
         assertTrue(exception.getMessage().contains("Amount"));
         assertTrue(exception.getMessage().contains("Buyer ID"));
