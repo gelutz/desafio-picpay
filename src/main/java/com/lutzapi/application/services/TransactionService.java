@@ -5,7 +5,6 @@ import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.application.dtos.TransactionDTO;
 import com.lutzapi.domain.entities.transaction.Transaction;
 import com.lutzapi.domain.entities.user.User;
-import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.TransactionRepository;
 import com.lutzapi.infrastructure.repositories.UserRepository;
@@ -26,17 +25,10 @@ public class TransactionService {
     private MockyAdapter apiAdapter;
 
     public Transaction createTransaction(TransactionDTO transaction) {
-        List<String> emptyFields = new ArrayList<>();
-        if (transaction.buyerId() == null) emptyFields.add("Buyer ID");
-        if (transaction.sellerId() == null) emptyFields.add("Seller ID");
-        if (transaction.amount() == null) emptyFields.add("Amount");
+        validateTransactionFields(transaction);
 
-        if (!emptyFields.isEmpty()) throw new MissingDataException(emptyFields);
-
-        User buyer = userRepository.findById(transaction.buyerId())
-                .orElseThrow(() -> new NotFoundException("Buyer ID", transaction.buyerId().toString()));
-        User seller = userRepository.findById(transaction.sellerId())
-                .orElseThrow(() -> new NotFoundException("Seller ID", transaction.sellerId().toString()));
+        User buyer = userService.findById(transaction.buyerId());
+        User seller = userService.findById(transaction.sellerId());
 
         userService.validateUserForTransaction(buyer, transaction.amount());
 
@@ -64,5 +56,14 @@ public class TransactionService {
     public boolean validateTransaction() {
         MockyTransactionDTO response = apiAdapter.call();
         return response.message().equals("Autorizado");
+    }
+
+    public void validateTransactionFields(TransactionDTO transaction) {
+        List<String> emptyFields = new ArrayList<>();
+        if (transaction.buyerId() == null) emptyFields.add("Buyer ID");
+        if (transaction.sellerId() == null) emptyFields.add("Seller ID");
+        if (transaction.amount() == null) emptyFields.add("Amount");
+
+        if (!emptyFields.isEmpty()) throw new MissingDataException(emptyFields);
     }
 }
