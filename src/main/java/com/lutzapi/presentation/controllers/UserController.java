@@ -13,11 +13,18 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private UserService userService;
 
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.FOUND)
     @ResponseBody
     @GetMapping
     public Iterable<User> list() {
         return userService.getAllUsers();
+    }
+
+    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseBody
+    @GetMapping("/{id}")
+    public User find(@PathVariable long id) {
+        return userService.findById(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -26,4 +33,6 @@ public class UserController {
     public User create(@RequestBody UserDTO user) {
         return userService.createUser(user);
     }
+
+
 }
