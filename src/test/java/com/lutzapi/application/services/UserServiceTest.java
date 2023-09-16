@@ -15,8 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,6 +36,46 @@ public class UserServiceTest {
     @BeforeEach
     public void setUp() {
         sut = new UserService(userRepoMock);
+    }
+
+    @Test
+    @DisplayName("Should return a list of Users")
+    public void itShouldReturnAListOfUsers() {
+        User mockedUser1 = mock(User.class);
+        User mockedUser2 = mock(User.class);
+        when(mockedUser1.getId()).thenReturn(1L);
+        when(mockedUser2.getId()).thenReturn(2L);
+
+        List<User> users = new ArrayList<>();
+        users.add(mockedUser1);
+        users.add(mockedUser2);
+
+        when(userRepoMock.findAll()).thenReturn(users);
+
+        Iterable<User> returnedUsers = sut.getAllUsers();
+        assertEquals(returnedUsers.iterator().next().getId(), users.get(0).getId());
+    }
+
+    @Test
+    @DisplayName("Should return user with given id")
+    public void itShouldReturnUserWithGivenId() {
+        User mockedUser1 = mock(User.class);
+        when(mockedUser1.getId()).thenReturn(1L);
+
+        when(userRepoMock.findById(anyLong())).thenReturn(Optional.of(mockedUser1));
+
+        User returnedUser = sut.findById(1L);
+        assertEquals(returnedUser.getId(), mockedUser1.getId());
+    }
+
+    @Test
+    @DisplayName("Should return nothing if user is validated")
+    public void itShouldReturnNothingIfUserIsValidated() {
+        User mockedUser = mock(User.class);
+        when(mockedUser.getType()).thenReturn(UserType.BUYER);
+        when(mockedUser.getBalance()).thenReturn(BigDecimal.valueOf(10));
+
+        assertDoesNotThrow(() -> sut.validateUserForTransaction(mockedUser, BigDecimal.valueOf(9)));
     }
 
     @Test
