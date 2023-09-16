@@ -1,18 +1,21 @@
 package com.lutzapi.application.adapters;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.domain.exceptions.mocky.MockyAuthException;
 import com.lutzapi.domain.exceptions.mocky.MockyDefaultExceptin;
 import com.lutzapi.infrastructure.repositories.templates.RestTemplate;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -48,5 +51,14 @@ public class MockyAdapterTest {
                 .thenReturn(mockedResponseEntity);
 
         assertThrows(MockyAuthException.class, () -> sut.call());
+    }
+
+    @Test
+    @DisplayName("Verifica se a API está funcionando")
+    public void itShouldReturnIfValidated() {
+        MockyTransactionDTO mockedDTO = new MockyTransactionDTO("Autorizado");
+
+        MockyTransactionDTO response = sut.call();
+        assertEquals(mockedDTO.message(), response.message());
     }
 }
