@@ -21,6 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -56,10 +57,24 @@ public class UserControllerTest {
 
         when(userService.getAllUsers()).thenReturn(users);
         this.mockMvc.perform(get("/users"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0]").isNotEmpty())
+                .andExpect(status().isFound())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[1].id").value(2));
+    }
+
+    @Test
+    @DisplayName("The endpoint should return the user with given ID")
+    public void itShouldReturnUserWithGivenId() throws Exception {
+        User mockUser1 = mock(User.class);
+        when(mockUser1.getId()).thenReturn(1L);
+
+        when(userService.findById(mockUser1.getId())).thenReturn(mockUser1);
+        this.mockMvc.perform(get("/users/1"))
+                .andExpect(status().isFound())
+                .andDo(print())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.balance").doesNotExist());
     }
 
     @Test
