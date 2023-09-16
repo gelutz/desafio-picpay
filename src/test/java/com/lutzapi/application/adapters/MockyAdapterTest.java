@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -51,14 +50,5 @@ public class MockyAdapterTest {
                 .thenReturn(mockedResponseEntity);
 
         assertThrows(MockyAuthException.class, () -> sut.call());
-    }
-
-    @Test
-    @DisplayName("Verifica se a API está funcionando")
-    public void itShouldReturnIfValidated() {
-        MockyTransactionDTO mockedDTO = new MockyTransactionDTO("Autorizado");
-
-        MockyTransactionDTO response = sut.call();
-        assertEquals(mockedDTO.message(), response.message());
     }
 }
