@@ -1,5 +1,6 @@
 package com.lutzapi.domain.entities.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,8 +31,10 @@ public class User {
     @Column(unique = true)
     private String email;
 
+    @JsonIgnore
     private String password;
 
+    @JsonIgnore
     private BigDecimal balance;
 
     public void subtractBalance(BigDecimal amount) {
