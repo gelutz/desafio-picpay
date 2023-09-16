@@ -1,8 +1,5 @@
 package com.lutzapi.application.services;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.lutzapi.application.adapters.MockyAdapter;
 import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.application.dtos.TransactionDTO;
@@ -21,6 +18,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -92,6 +92,8 @@ public class TransactionServiceTest {
         when(buyer.getBalance()).thenReturn(transactionDTO.amount());
         when(seller.getId()).thenReturn(transactionDTO.sellerId());
         when(seller.getBalance()).thenReturn(transactionDTO.amount());
+
+        when(transactionRepoMock.save(any(Transaction.class))).thenReturn(mock(Transaction.class));
 
         Transaction response = sut.saveTransaction(buyer, seller, transactionDTO);
 
