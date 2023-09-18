@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lutzapi.application.dtos.TransactionDTO;
 import com.lutzapi.application.services.TransactionService;
 import com.lutzapi.domain.entities.transaction.Transaction;
-import com.lutzapi.domain.entities.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,14 +37,14 @@ class TransactionControllerTest {
     }
 
     @Test
-    @DisplayName("The endpoint should return an empty list when there are no users")
+    @DisplayName("Should return the created transaction")
     void createTransaction() throws Exception {
         ObjectMapper om = new ObjectMapper();
         TransactionDTO transactionDTO = mock(TransactionDTO.class);
         Transaction transactionMock = mock(Transaction.class);
 
-        when(transactionMock.getBuyer()).thenReturn(mock(User.class));
-        when(transactionMock.getBuyer().getId()).thenReturn(1L);
+        when(transactionMock.getId()).thenReturn(1L);
+        when(transactionService.validateTransaction()).thenReturn(true);
         when(transactionService.createTransaction(transactionDTO)).thenReturn(transactionMock);
 
         String jsonTransaction = om.writeValueAsString(transactionDTO);

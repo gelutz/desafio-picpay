@@ -2,7 +2,6 @@ package com.lutzapi.domain.exceptions.handlers;
 
 import com.lutzapi.domain.exceptions.LutzExceptionResponse;
 import com.lutzapi.domain.exceptions.repository.NotFoundException;
-import com.lutzapi.domain.exceptions.user.MissingDataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -44,14 +43,6 @@ public class ControllerExceptionHandler {
     public LutzExceptionResponse handle(NotFoundException exception) {
         externalLog(exception);
         return new LutzExceptionResponse("Não foi possível encontrar o registro com esse " + exception.getMessage(), exception.getKey());
-    }
-
-    @ExceptionHandler(MissingDataException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public LutzExceptionResponse handle(MissingDataException exception) {
-        externalLog(exception);
-        return new LutzExceptionResponse(exception.getMessage(), null);
     }
 
     @ExceptionHandler(HttpClientErrorException.class)

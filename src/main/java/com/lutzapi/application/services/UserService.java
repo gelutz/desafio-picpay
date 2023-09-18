@@ -2,11 +2,10 @@ package com.lutzapi.application.services;
 
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.domain.entities.user.User;
-import com.lutzapi.domain.entities.user.UserType;
+import com.lutzapi.domain.exceptions.BadDataException;
 import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
-import com.lutzapi.domain.exceptions.user.WrongUserTypeException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -52,13 +51,21 @@ public class UserService {
         if (!emptyFields.isEmpty()) throw new MissingDataException(emptyFields);
     }
 
-    public void validateUserForTransaction(User buyer, BigDecimal amount) {
-        if (buyer.getType() == UserType.SELLER) {
-            throw new WrongUserTypeException(buyer.getId());
+    public void subtractBalance(User user, BigDecimal amount) {
+        if (user.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientFundsException(user.getId());
         }
 
-        if (buyer.getBalance().compareTo(amount) < 0) {
-            throw new InsufficientFundsException(buyer.getId());
+        user.setBalance(user.getBalance().subtract(amount));
+        userRepository.save(user);
+    }
+
+    public void addBalance(User user, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BadDataException("O valor não pode ser negativo/zero.");
         }
+
+        user.setBalance(user.getBalance().add(amount));
+        userRepository.save(user);
     }
 }

@@ -7,8 +7,6 @@ import com.lutzapi.domain.entities.transaction.Transaction;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.TransactionRepository;
-import com.lutzapi.infrastructure.repositories.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -27,8 +24,6 @@ import static org.mockito.Mockito.*;
 public class TransactionServiceTest {
     private TransactionService sut;
     @Mock
-    private UserRepository userRepoMock;
-    @Mock
     private TransactionRepository transactionRepoMock;
     @Mock
     private UserService userServiceMock;
@@ -37,7 +32,7 @@ public class TransactionServiceTest {
 
     @BeforeEach
     public void setUp() {
-        sut = new TransactionService(userRepoMock, transactionRepoMock, userServiceMock, adapterMock);
+        sut = new TransactionService(transactionRepoMock, userServiceMock, adapterMock);
     }
 
     @Test
@@ -54,28 +49,12 @@ public class TransactionServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar uma EntityNotFoundException se não encontrar o buyer ou o seller")
-    public void createTransactionShouldThrowIfUsersNotFound() {
-        TransactionDTO transactionDTO = new TransactionDTO(BigDecimal.ONE, 1L, 2L);
-
-        when(userRepoMock.findById(transactionDTO.buyerId())).thenThrow(EntityNotFoundException.class);
-        when(userRepoMock.findById(transactionDTO.sellerId())).thenThrow(EntityNotFoundException.class);
-
-        assertThrows(EntityNotFoundException.class, () -> userRepoMock.findById(transactionDTO.buyerId()));
-        assertThrows(EntityNotFoundException.class, () -> userRepoMock.findById(transactionDTO.sellerId()));
-    }
-
-    @Test
     @DisplayName("Deve retornar nulo se a API não validar")
     public void itShouldReturnNullIfNotValidated() {
         TransactionDTO transactionDTO = new TransactionDTO(BigDecimal.ONE, 1L, 2L);
 
-        when(userRepoMock.findById(transactionDTO.buyerId()))
-                .thenReturn(Optional.of(mock(User.class)));
-        when(userRepoMock.findById(transactionDTO.sellerId()))
-                .thenReturn(Optional.of(mock(User.class)));
-        when(adapterMock.call())
-                .thenReturn(new MockyTransactionDTO("Mocked message"));
+        when(userServiceMock.findById(anyLong())).thenReturn(mock(User.class));
+        when(adapterMock.call()).thenReturn(new MockyTransactionDTO("Mocked message"));
 
         Transaction response = sut.createTransaction(transactionDTO);
 
@@ -107,13 +86,18 @@ public class TransactionServiceTest {
     @DisplayName("Deve retornar uma transaction se a API validar")
     public void itShouldReturnTransactionIfValidated() {
         TransactionDTO transactionDTO = new TransactionDTO(BigDecimal.ONE, 1L, 2L);
+        User buyer = mock(User.class);
+        User seller = mock(User.class);
+        when(buyer.getId()).thenReturn(transactionDTO.buyerId());
+        when(buyer.getBalance()).thenReturn(transactionDTO.amount());
+        when(seller.getId()).thenReturn(transactionDTO.sellerId());
+        when(seller.getBalance()).thenReturn(transactionDTO.amount());
 
-        when(userRepoMock.findById(transactionDTO.buyerId()))
-                .thenReturn(Optional.of(mock(User.class)));
-        when(userRepoMock.findById(transactionDTO.sellerId()))
-                .thenReturn(Optional.of(mock(User.class)));
-        when(adapterMock.call())
-                .thenReturn(new MockyTransactionDTO("Autorizado"));
+        when(userServiceMock.findById(transactionDTO.buyerId())).thenReturn(buyer);
+        when(userServiceMock.findById(transactionDTO.sellerId())).thenReturn(seller);
+        when(userServiceMock.validateUserForTransaction(any(User.class), BigDecimal.ONE)).thenReturn();
+
+        when(adapterMock.call()).thenReturn(new MockyTransactionDTO("Autorizado"));
 
         Transaction response = sut.createTransaction(transactionDTO);
 
