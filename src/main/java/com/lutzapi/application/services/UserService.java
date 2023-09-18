@@ -21,21 +21,17 @@ import java.util.List;
 public class UserService {
     private UserRepository userRepository;
 
+    public Iterable<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
     public User findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Buyer ID", id + ""));
     }
 
     public User createUser(UserDTO user) {
-
-        List<String> emptyFields = new ArrayList<>();
-        if (StringUtils.isEmpty(user.firstName())) emptyFields.add("First name");
-        if (StringUtils.isEmpty(user.document())) emptyFields.add("Document");
-        if (user.type() == null) emptyFields.add("Type");
-
-        if (!emptyFields.isEmpty()) throw new MissingDataException(emptyFields);
-
-
+        validateUserData(user);
         User newUser = new User();
         newUser.setFirstName(user.firstName());
         newUser.setLastName(user.lastName());
@@ -47,6 +43,15 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
+    public void validateUserData(UserDTO user) {
+        List<String> emptyFields = new ArrayList<>();
+        if (StringUtils.isEmpty(user.firstName())) emptyFields.add("First name");
+        if (StringUtils.isEmpty(user.document())) emptyFields.add("Document");
+        if (user.type() == null) emptyFields.add("Type");
+
+        if (!emptyFields.isEmpty()) throw new MissingDataException(emptyFields);
+    }
+
     public void validateUserForTransaction(User buyer, BigDecimal amount) {
         if (buyer.getType() == UserType.SELLER) {
             throw new WrongUserTypeException(buyer.getId());
@@ -55,9 +60,5 @@ public class UserService {
         if (buyer.getBalance().compareTo(amount) < 0) {
             throw new InsufficientFundsException(buyer.getId());
         }
-    }
-
-    public Iterable<User> getAllUsers() {
-        return userRepository.findAll();
     }
 }
