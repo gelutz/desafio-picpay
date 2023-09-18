@@ -5,7 +5,6 @@ import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserType;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
-import com.lutzapi.domain.exceptions.user.WrongUserTypeException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -92,27 +91,6 @@ public class UserServiceTest {
         assertThrows(MissingDataException.class, () -> sut.validateUserData(user));
     }
 
-
-    @Test
-    @DisplayName("Should return nothing if user is not validated")
-    public void itShouldReturnNothingIfUserIsValidated() {
-        User mockedUser = mock(User.class);
-        when(mockedUser.getType()).thenReturn(UserType.BUYER);
-        when(mockedUser.getBalance()).thenReturn(BigDecimal.valueOf(10));
-
-        assertDoesNotThrow(() -> sut.validateUserForTransaction(mockedUser, BigDecimal.valueOf(9)));
-    }
-
-    @Test
-    @DisplayName("Throws WrongUserTypeException if the user's type is SELLER.")
-    public void itShouldthrowIfUserIsSeller(){
-        BigDecimal transactionAmount = BigDecimal.valueOf(1);
-        User buyer = mock(User.class);
-        when(buyer.getType()).thenReturn(UserType.SELLER);
-
-        assertThrows(WrongUserTypeException.class, () -> sut.validateUserForTransaction(buyer, transactionAmount));
-    }
-
     @Test
     @DisplayName("Throws if the user doesnt have enough balance.")
     public void itShouldThrowIfUserDoesntHaveBalance(){
@@ -120,9 +98,20 @@ public class UserServiceTest {
         BigDecimal transactionAmount = userBalance.add(BigDecimal.valueOf(1));
         User buyer = mock(User.class);
 
-        when(buyer.getType()).thenReturn(UserType.BUYER);
         when(buyer.getBalance()).thenReturn(userBalance);
 
-        assertThrows(InsufficientFundsException.class, () -> sut.validateUserForTransaction(buyer, transactionAmount));
+        assertThrows(InsufficientFundsException.class, () -> sut.subtractBalance(buyer, transactionAmount));
+    }
+
+    @Test
+    @DisplayName("Throws if the amount to be added is negative.")
+    public void itShouldThrowIfAmountIsNegative() {
+        BigDecimal transactionAmount = BigDecimal.valueOf(-1);
+        User buyer = mock(User.class);
+
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> sut.subtractBalance(buyer, transactionAmount));
+
+        asserTrue(exception.getMessage().contains("negativo"));
     }
 }

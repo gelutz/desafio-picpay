@@ -57,7 +57,7 @@ public class UserControllerTest {
 
         when(userService.getAllUsers()).thenReturn(users);
         this.mockMvc.perform(get("/users"))
-                .andExpect(status().isFound())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[1].id").value(2));
     }

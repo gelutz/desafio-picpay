@@ -5,9 +5,10 @@ import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.application.dtos.TransactionDTO;
 import com.lutzapi.domain.entities.transaction.Transaction;
 import com.lutzapi.domain.entities.user.User;
+import com.lutzapi.domain.entities.user.UserType;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
+import com.lutzapi.domain.exceptions.user.WrongUserTypeException;
 import com.lutzapi.infrastructure.repositories.TransactionRepository;
-import com.lutzapi.infrastructure.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,6 @@ import java.util.List;
 // os campos no constructor são autowired por causa do IoC do spring, o que faz isso funcionar sem o @Autowired
 @AllArgsConstructor
 public class TransactionService {
-    private UserRepository userRepository;
     private TransactionRepository transactionRepository;
     private UserService userService;
     private MockyAdapter apiAdapter;
@@ -30,7 +30,9 @@ public class TransactionService {
         User buyer = userService.findById(transaction.buyerId());
         User seller = userService.findById(transaction.sellerId());
 
-        userService.validateUserForTransaction(buyer, transaction.amount());
+        if (buyer.getType() == UserType.SELLER) {
+            throw new WrongUserTypeException(buyer.getId());
+        }
 
         if (validateTransaction()) {
             return saveTransaction(buyer, seller, transaction);
@@ -45,11 +47,9 @@ public class TransactionService {
         newTransaction.setSeller(seller);
         newTransaction.setAmount(transaction.amount());
 
-        buyer.subtractBalance(transaction.amount());
-        seller.addBalance(transaction.amount());
+        userService.subtractBalance(buyer, transaction.amount());
+        userService.addBalance(seller, transaction.amount());
 
-        userRepository.save(buyer);
-        userRepository.save(seller);
         return transactionRepository.save(newTransaction);
     }
 
