@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -68,8 +69,32 @@ public class UserServiceTest {
         assertEquals(returnedUser.getId(), mockedUser1.getId());
     }
 
+
     @Test
-    @DisplayName("Should return nothing if user is validated")
+    @DisplayName("Should return the user that was just created")
+    public void itShouldReturnCreatedUser() {
+        UserDTO userDTOMock = new UserDTO("mock", "mock", "mock", "mock", UserType.BUYER, BigDecimal.ONE);
+        User userMock = mock(User.class);
+
+        when(userMock.getEmail()).thenReturn(userDTOMock.email());
+        when(userRepoMock.save(any(User.class))).thenReturn(userMock);
+
+        User response = sut.createUser(userDTOMock);
+
+        assertInstanceOf(User.class, response);
+        assertEquals(response.getEmail(), userDTOMock.email());
+    }
+
+    @Test
+    @DisplayName("Throws MissingDataException when there are missing fields (buyerID, sellerID or amount)")
+    public void itThrowsWhenMissingData() {
+        UserDTO user = mock(UserDTO.class); // all fields are null
+        assertThrows(MissingDataException.class, () -> sut.validateUserData(user));
+    }
+
+
+    @Test
+    @DisplayName("Should return nothing if user is not validated")
     public void itShouldReturnNothingIfUserIsValidated() {
         User mockedUser = mock(User.class);
         when(mockedUser.getType()).thenReturn(UserType.BUYER);
@@ -79,14 +104,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw MissingDataException when there are missing fields (buyerID, sellerID or amount)")
-    public void itThrowsWhenMissingData() {
-        UserDTO user = mock(UserDTO.class); // all fields are null
-        assertThrows(MissingDataException.class, () -> sut.createUser(user));
-    }
-
-    @Test
-    @DisplayName("Should throw WrongUserTypeException if the user's type is SELLER.")
+    @DisplayName("Throws WrongUserTypeException if the user's type is SELLER.")
     public void itShouldthrowIfUserIsSeller(){
         BigDecimal transactionAmount = BigDecimal.valueOf(1);
         User buyer = mock(User.class);
@@ -96,7 +114,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw if the user doesnt have enough balance.")
+    @DisplayName("Throws if the user doesnt have enough balance.")
     public void itShouldThrowIfUserDoesntHaveBalance(){
         BigDecimal userBalance = BigDecimal.valueOf(1);
         BigDecimal transactionAmount = userBalance.add(BigDecimal.valueOf(1));
