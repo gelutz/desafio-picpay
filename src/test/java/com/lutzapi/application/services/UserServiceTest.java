@@ -112,6 +112,6 @@ public class UserServiceTest {
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> sut.subtractBalance(buyer, transactionAmount));
 
-        asserTrue(exception.getMessage().contains("negativo"));
+        assertTrue(exception.getMessage().contains("negativo"));
     }
 }

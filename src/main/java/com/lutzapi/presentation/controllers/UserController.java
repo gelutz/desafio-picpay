@@ -3,6 +3,7 @@ package com.lutzapi.presentation.controllers;
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.application.services.UserService;
 import com.lutzapi.domain.entities.user.User;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,14 +31,14 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     @PostMapping
-    public User create(@RequestBody UserDTO user) {
+    public User create(@Valid @RequestBody UserDTO user) {
         return userService.createUser(user);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @PutMapping("/{id}")
-    public User create(@PathVariable Long id, @RequestBody UserDTO user) {
+    public User create(@PathVariable Long id, @Valid @RequestBody UserDTO user) {
         return userService.updateUser(id, user);
     }
 
