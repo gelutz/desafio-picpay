@@ -7,6 +7,7 @@ import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,17 @@ public class UserService {
         newUser.setBalance(user.balance() != null ? user.balance() : BigDecimal.valueOf(0));
 
         return userRepository.save(newUser);
+    }
+
+    public User updateUser(Long id, UserDTO userData) {
+        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new)
+        if (userData.firstName() != null) user.setFirstName(userData.firstName());
+        if (userData.lastName() != null) user.setLastName(userData.lastName());
+        if (userData.document() != null) user.setDocument(userData.document());
+        if (userData.email() != null) user.setEmail(userData.email());
+        if (userData.type() != null) user.setType(userData.type());
+
+        return userRepository.save(user);
     }
 
     public void validateUserData(UserDTO user) {
