@@ -40,12 +40,12 @@ public class TransactionServiceTest {
     public void itShouldThrowIfMissingData() {
         TransactionDTO transactionDTO = new TransactionDTO(null, null, null);
 
-        Exception exception = assertThrows(MissingDataException.class,
+        MissingDataException exception = assertThrows(MissingDataException.class,
                 () -> sut.validateTransactionFields(transactionDTO));
 
-        assertTrue(exception.getMessage().contains("Amount"));
-        assertTrue(exception.getMessage().contains("Buyer ID"));
-        assertTrue(exception.getMessage().contains("Seller ID"));
+        assertTrue(exception.getFields().contains("Amount"));
+        assertTrue(exception.getFields().contains("Buyer ID"));
+        assertTrue(exception.getFields().contains("Seller ID"));
     }
 
     @Test
@@ -95,7 +95,6 @@ public class TransactionServiceTest {
 
         when(userServiceMock.findById(transactionDTO.buyerId())).thenReturn(buyer);
         when(userServiceMock.findById(transactionDTO.sellerId())).thenReturn(seller);
-        when(userServiceMock.validateUserForTransaction(any(User.class), BigDecimal.ONE)).thenReturn();
 
         when(adapterMock.call()).thenReturn(new MockyTransactionDTO("Autorizado"));
 

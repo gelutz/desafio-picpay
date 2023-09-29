@@ -1,25 +1,18 @@
 package com.lutzapi.domain.exceptions.user;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+
 import java.util.List;
-import java.util.Objects;
 
+@EqualsAndHashCode(of = "fields", callSuper = true)
+@ToString
+@Getter
 public class MissingDataException extends RuntimeException {
-    final List<String> requiredFields;
+    final List<String> fields;
     public MissingDataException(List<String> fields) {
-        super("Os seguintes campos estão faltando: " + String.join(", ", fields));
-        requiredFields = fields;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MissingDataException that = (MissingDataException) o;
-        return Objects.equals(requiredFields, that.requiredFields);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(requiredFields);
+        super("Os seguintes campos estão faltando");
+        this.fields = fields;
     }
 }
