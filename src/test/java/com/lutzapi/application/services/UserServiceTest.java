@@ -3,6 +3,7 @@ package com.lutzapi.application.services;
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserType;
+import com.lutzapi.domain.exceptions.BadDataException;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
@@ -109,9 +110,9 @@ public class UserServiceTest {
         BigDecimal transactionAmount = BigDecimal.valueOf(-1);
         User buyer = mock(User.class);
 
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> sut.subtractBalance(buyer, transactionAmount));
+        BadDataException exception = assertThrows(BadDataException.class,
+                () -> sut.addBalance(buyer, transactionAmount));
 
-        asserTrue(exception.getMessage().contains("negativo"));
+        assertTrue(exception.getMessage().contains("negativo"));
     }
 }
