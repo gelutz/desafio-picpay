@@ -3,8 +3,11 @@ package com.lutzapi.domain.entities.transaction;
 import com.lutzapi.domain.entities.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 @Entity(name = "transactions")
 @Table(name = "transactions")
@@ -28,4 +31,10 @@ public class Transaction {
     private User seller;
 
     private BigDecimal amount;
+
+    @CreationTimestamp
+    private Instant createdAt;
+
+    @UpdateTimestamp
+    private Instant updatedAt;
 }
