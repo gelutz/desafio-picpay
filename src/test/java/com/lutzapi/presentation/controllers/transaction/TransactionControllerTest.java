@@ -15,6 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -39,20 +42,23 @@ class TransactionControllerTest {
     @Test
     @DisplayName("Should return the created transaction")
     void createTransaction() throws Exception {
-        ObjectMapper om = new ObjectMapper();
-        TransactionDTO transactionDTO = mock(TransactionDTO.class);
+        BigDecimal amount = BigDecimal.valueOf(1);
+        TransactionDTO transactionDTO = new TransactionDTO(amount, UUID.randomUUID(), UUID.randomUUID());
         Transaction transactionMock = mock(Transaction.class);
 
         when(transactionMock.getId()).thenReturn(1L);
+        when(transactionMock.getAmount()).thenReturn(amount);
         when(transactionService.validateTransaction()).thenReturn(true);
         when(transactionService.createTransaction(transactionDTO)).thenReturn(transactionMock);
 
+        ObjectMapper om = new ObjectMapper();
         String jsonTransaction = om.writeValueAsString(transactionDTO);
         this.mockMvc.perform(post("/transactions")
                         .content(jsonTransaction)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1));
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.amount").value(amount.toString()));
         }
 }

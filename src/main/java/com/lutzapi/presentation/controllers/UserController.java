@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor
@@ -23,7 +25,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.FOUND)
     @ResponseBody
     @GetMapping("/{id}")
-    public User find(@PathVariable long id) {
+    public User find(@PathVariable UUID id) {
         return userService.findById(id);
     }
 
@@ -37,7 +39,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @PutMapping("/{id}")
-    public User update(@PathVariable Long id, @RequestBody UserDTO user) {
+    public User update(@PathVariable UUID id, @RequestBody UserDTO user) {
         return userService.updateUser(id, user);
     }
 }
