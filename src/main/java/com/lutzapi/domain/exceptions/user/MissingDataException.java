@@ -1,14 +1,13 @@
 package com.lutzapi.domain.exceptions.user;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
 
 import java.util.List;
 
+
+@Data
 @EqualsAndHashCode(of = "fields", callSuper = true)
-@ToString
-@Getter
 public class MissingDataException extends RuntimeException {
     final List<String> fields;
     public MissingDataException(List<String> fields) {

@@ -3,6 +3,7 @@ package com.lutzapi.domain.exceptions.handlers;
 import com.lutzapi.domain.exceptions.LutzExceptionResponse;
 import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,7 +21,9 @@ public class ControllerExceptionHandler {
     Logger LOGGER = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     protected void externalLog(Exception exception) {
-        LOGGER.error((new Date()) + "-x-x ERRO: " + exception.getClass().getName() + "\n");
+        String info = (new Date()) + "-x-x ERRO: ";
+        LOGGER.error(info + exception.getClass().getName() + "\n");
+        LOGGER.error(info + ExceptionUtils.getStackTrace(exception));
     }
 
     @ExceptionHandler(value = {RuntimeException.class, Exception.class})
@@ -36,7 +39,7 @@ public class ControllerExceptionHandler {
     @ResponseBody
     public LutzExceptionResponse handle(MissingDataException exception) {
         externalLog(exception);
-        return new LutzExceptionResponse(exception.getMessage(), exception.getFields().toString());
+        return new LutzExceptionResponse(exception.getMessage(), exception.getFields());
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)

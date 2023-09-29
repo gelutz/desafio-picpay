@@ -9,14 +9,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+@Data
 @Entity(name = "transactions")
 @Table(name = "transactions")
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
-@ToString
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +30,10 @@ public class Transaction {
     private BigDecimal amount;
 
     @CreationTimestamp
+    @Setter(AccessLevel.NONE)
     private Instant createdAt;
 
     @UpdateTimestamp
+    @Setter(AccessLevel.NONE)
     private Instant updatedAt;
 }

@@ -8,18 +8,17 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
+@Data
 @Entity(name = "users")
 @Table(name = "users")
-@Getter
-@Setter
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     private UserType type;
@@ -41,8 +40,10 @@ public class User {
     private BigDecimal balance;
 
     @CreationTimestamp
+    @Setter(AccessLevel.NONE)
     private Instant createdAt;
 
     @UpdateTimestamp
+    @Setter(AccessLevel.NONE)
     private Instant updatedAt;
 }

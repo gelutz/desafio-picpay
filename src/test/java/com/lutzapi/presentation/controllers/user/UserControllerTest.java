@@ -4,18 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.application.services.UserService;
 import com.lutzapi.domain.entities.user.User;
+import com.lutzapi.domain.exceptions.handlers.ControllerExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -29,12 +32,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Import(ControllerExceptionHandler.class)
 public class UserControllerTest {
     @MockBean
     private UserService userService;
     @Autowired
     private MockMvc mockMvc;
-
     @Test
     @DisplayName("The endpoint should return an empty list when there are no users")
     public void itShouldReturnAnEmptyArray() throws Exception {
@@ -48,8 +51,10 @@ public class UserControllerTest {
     public void itShouldReturnAListOfUsers() throws Exception {
         User mockUser1 = mock(User.class);
         User mockUser2 = mock(User.class);
-        when(mockUser1.getId()).thenReturn(1L);
-        when(mockUser2.getId()).thenReturn(2L);
+        UUID uuid1 = UUID.randomUUID();
+        UUID uuid2 = UUID.randomUUID();
+        when(mockUser1.getId()).thenReturn(uuid1);
+        when(mockUser2.getId()).thenReturn(uuid2);
 
         List<User> users = new ArrayList<>();
         users.add(mockUser1);
@@ -58,25 +63,27 @@ public class UserControllerTest {
         when(userService.getAllUsers()).thenReturn(users);
         this.mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[1].id").value(2));
+                .andExpect(jsonPath("$[0].id").value(uuid1.toString()))
+                .andExpect(jsonPath("$[1].id").value(uuid2.toString()));
     }
 
     @Test
     @DisplayName("The endpoint should return the user with given ID")
     public void itShouldReturnUserWithGivenId() throws Exception {
         User mockUser1 = mock(User.class);
-        when(mockUser1.getId()).thenReturn(1L);
+        UUID uuid = UUID.randomUUID();
+        when(mockUser1.getId()).thenReturn(uuid);
 
         when(userService.findById(mockUser1.getId())).thenReturn(mockUser1);
-        this.mockMvc.perform(get("/users/1"))
+        this.mockMvc.perform(get("/users/" + uuid))
                 .andExpect(status().isFound())
                 .andDo(print())
-                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.id").value(uuid.toString()))
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.balance").doesNotExist());
     }
 
+    // todo this test is a false positive
     @Test
     @DisplayName("Should create an User and return 201")
     public void itShouldThrowWhenCreatingUserWithMissingData() throws Exception {
@@ -88,6 +95,7 @@ public class UserControllerTest {
         this.mockMvc.perform(post("/users")
                         .content(jsonUser)
                         .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 .andExpect(status().isCreated());
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -25,7 +26,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User findById(Long id) {
+    public User findById(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Buyer ID", id + ""));
     }
@@ -43,7 +44,7 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    public User updateUser(Long id, UserDTO userData) {
+    public User updateUser(UUID id, UserDTO userData) {
         User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         if (userData.email() != null)
             user.setEmail(userData.email());

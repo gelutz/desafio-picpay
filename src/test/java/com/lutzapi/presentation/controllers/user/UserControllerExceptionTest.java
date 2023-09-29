@@ -25,6 +25,7 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // depois de alguns testes descobri que essa classe não testa o @ControllerAdvice
@@ -58,17 +59,16 @@ public class UserControllerExceptionTest {
         emptyFields.add("Document");
         emptyFields.add("Email");
 
-        doThrow(new MissingDataException(emptyFields)).when(userServiceMock).validateUserData(user);
+        when(userServiceMock.createUser(user))
+                .thenThrow(new MissingDataException(emptyFields));
 
         ObjectMapper om = new ObjectMapper();
         mockMvc.perform(post("/users")
                         .content(om.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().is4xxClientError())
-                .andReturn();
-
-        verify(userServiceMock, times(1)).validateUserData(user);
+                .andExpect(jsonPath("$.value").isArray())
+                .andExpect(jsonPath("$.value.[0]").value(emptyFields.get(0)));
     }
 
     @Test

@@ -10,5 +10,5 @@ import lombok.Getter;
 @EqualsAndHashCode(of = "key", callSuper = true)
 public class NotFoundException extends EntityNotFoundException {
     String message;
-    String key;
+    Object key;
 }

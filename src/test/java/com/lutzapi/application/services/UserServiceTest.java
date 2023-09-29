@@ -18,10 +18,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,8 +44,8 @@ public class UserServiceTest {
     public void itShouldReturnAListOfUsers() {
         User mockedUser1 = mock(User.class);
         User mockedUser2 = mock(User.class);
-        when(mockedUser1.getId()).thenReturn(1L);
-        when(mockedUser2.getId()).thenReturn(2L);
+        when(mockedUser1.getId()).thenReturn(UUID.randomUUID());
+        when(mockedUser2.getId()).thenReturn(UUID.randomUUID());
 
         List<User> users = new ArrayList<>();
         users.add(mockedUser1);
@@ -61,11 +61,11 @@ public class UserServiceTest {
     @DisplayName("Should return user with given id")
     public void itShouldReturnUserWithGivenId() {
         User mockedUser1 = mock(User.class);
-        when(mockedUser1.getId()).thenReturn(1L);
+        when(mockedUser1.getId()).thenReturn(UUID.randomUUID());
 
-        when(userRepoMock.findById(anyLong())).thenReturn(Optional.of(mockedUser1));
+        when(userRepoMock.findById(any(UUID.class))).thenReturn(Optional.of(mockedUser1));
 
-        User returnedUser = sut.findById(1L);
+        User returnedUser = sut.findById(UUID.randomUUID());
         assertEquals(returnedUser.getId(), mockedUser1.getId());
     }
 
