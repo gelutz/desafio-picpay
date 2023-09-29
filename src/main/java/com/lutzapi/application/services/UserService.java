@@ -7,6 +7,7 @@ import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -42,13 +43,35 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
+    public User updateUser(Long id, UserDTO userData) {
+        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        if (userData.email() != null)
+            user.setEmail(userData.email());
+        if (userData.firstName() != null)
+            user.setFirstName(userData.firstName());
+        if (userData.lastName() != null)
+            user.setLastName(userData.lastName());
+        if (userData.document() != null)
+            user.setDocument(userData.document());
+        if (userData.balance() != null)
+            user.setBalance(userData.balance());
+        if (userData.type() != null)
+            user.setType(userData.type());
+
+        return userRepository.save(user);
+    }
+
     public void validateUserData(UserDTO user) {
         List<String> emptyFields = new ArrayList<>();
-        if (StringUtils.isEmpty(user.firstName())) emptyFields.add("First name");
-        if (StringUtils.isEmpty(user.document())) emptyFields.add("Document");
-        if (user.type() == null) emptyFields.add("Type");
+        if (StringUtils.isEmpty(user.firstName()))
+            emptyFields.add("First name");
+        if (StringUtils.isEmpty(user.document()))
+            emptyFields.add("Document");
+        if (StringUtils.isEmpty(user.email()))
+            emptyFields.add("Email");
 
-        if (!emptyFields.isEmpty()) throw new MissingDataException(emptyFields);
+        if (!emptyFields.isEmpty())
+            throw new MissingDataException(emptyFields);
     }
 
     public void subtractBalance(User user, BigDecimal amount) {

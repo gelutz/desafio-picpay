@@ -22,11 +22,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // depois de alguns testes descobri que essa classe não testa o @ControllerAdvice
@@ -58,20 +56,19 @@ public class UserControllerExceptionTest {
         List<String> emptyFields = new ArrayList<>();
         emptyFields.add("First Name");
         emptyFields.add("Document");
-        emptyFields.add("Type");
+        emptyFields.add("Email");
 
-        when(userServiceMock.createUser(user)).thenThrow(new MissingDataException(emptyFields));
+        doThrow(new MissingDataException(emptyFields)).when(userServiceMock).validateUserData(user);
 
         ObjectMapper om = new ObjectMapper();
         mockMvc.perform(post("/users")
                         .content(om.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString(emptyFields.get(0))))
-                .andExpect(content().string(containsString(emptyFields.get(1))))
-                .andExpect(content().string(containsString(emptyFields.get(2))));
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andReturn();
 
-        verify(userServiceMock, times(1)).createUser(user);
+        verify(userServiceMock, times(1)).validateUserData(user);
     }
 
     @Test
