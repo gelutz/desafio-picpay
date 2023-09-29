@@ -34,5 +34,10 @@ public class UserController {
         return userService.createUser(user);
     }
 
-
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @PutMapping("/{id}")
+    public User update(@PathVariable Long id, @RequestBody UserDTO user) {
+        return userService.updateUser(id, user);
+    }
 }
