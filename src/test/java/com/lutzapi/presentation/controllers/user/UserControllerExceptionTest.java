@@ -1,8 +1,8 @@
 package com.lutzapi.presentation.controllers.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.application.services.UserService;
+import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.exceptions.handlers.ControllerExceptionHandler;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.presentation.controllers.UserController;
@@ -52,7 +52,7 @@ public class UserControllerExceptionTest {
     @DisplayName("MissingDataException")
     public void createUserShouldThrowIfThereIsMissingData() throws Exception {
         // por algum motivo precisa ser assim, usando Mockito.mock(UserDTO.class) o retorno do controller é 201 (wtf?)
-        UserDTO user = new UserDTO(null, null, null, null, null, null);
+        User user = mock(User.class);
 
         List<String> emptyFields = new ArrayList<>();
         emptyFields.add("First Name");
@@ -74,7 +74,7 @@ public class UserControllerExceptionTest {
     @Test
     @DisplayName("DataIntegrityViolationException")
     public void itShouldNotCreateTwoUsersWithSameInfo() throws Exception {
-        UserDTO user = new UserDTO(null, null, null, null, null, null);
+        User user = mock(User.class);
 
         when(userServiceMock.createUser(user))
                 .thenThrow(DataIntegrityViolationException.class);

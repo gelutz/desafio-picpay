@@ -7,7 +7,6 @@ import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -31,21 +30,24 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("Buyer ID", id + ""));
     }
 
-    public User createUser(UserDTO user) {
-        validateUserData(user);
+    public User createUser(User user) {
         User newUser = new User();
-        newUser.setFirstName(user.firstName());
-        newUser.setLastName(user.lastName());
-        newUser.setDocument(user.document());
-        newUser.setEmail(user.email());
-        newUser.setType(user.type());
-        newUser.setBalance(user.balance() != null ? user.balance() : BigDecimal.valueOf(0));
+        newUser.setFirstName(user.getFirstName());
+        newUser.setLastName(user.getLastName());
+        newUser.setDocument(user.getDocument());
+        newUser.setEmail(user.getEmail());
+        newUser.setType(user.getType());
+        newUser.setBalance(user.getBalance() != null ? user.getBalance() : BigDecimal.valueOf(0));
 
         return userRepository.save(newUser);
     }
 
     public User updateUser(UUID id, UserDTO userData) {
-        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        validateUserData(userData);
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Buyer ID", id + ""));
+
         if (userData.email() != null)
             user.setEmail(userData.email());
         if (userData.firstName() != null)
@@ -64,11 +66,11 @@ public class UserService {
 
     public void validateUserData(UserDTO user) {
         List<String> emptyFields = new ArrayList<>();
-        if (StringUtils.isEmpty(user.firstName()))
+        if (StringUtils.isBlank(user.firstName()))
             emptyFields.add("First name");
-        if (StringUtils.isEmpty(user.document()))
+        if (StringUtils.isBlank(user.document()))
             emptyFields.add("Document");
-        if (StringUtils.isEmpty(user.email()))
+        if (StringUtils.isBlank(user.email()))
             emptyFields.add("Email");
 
         if (!emptyFields.isEmpty())

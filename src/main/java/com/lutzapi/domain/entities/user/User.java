@@ -2,7 +2,10 @@ package com.lutzapi.domain.entities.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -20,24 +23,30 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Enumerated(EnumType.STRING)
-    private UserType type;
-
+    @Column(nullable = false)
+    @NotBlank
     private String firstName;
 
     private String lastName;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
+    @NotBlank
     private String document;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
+    @Email
     private String email;
 
     @JsonIgnore
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("BUYER")
+    private UserType type;
+
     @JsonIgnore
-    @Column(columnDefinition = "integer default 0")
+    @Column
+    @ColumnDefault("0")
     private BigDecimal balance;
 
     @CreationTimestamp
