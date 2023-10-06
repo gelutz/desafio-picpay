@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -15,13 +17,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
     Logger LOGGER = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     protected void externalLog(Exception exception) {
-        String info = (new Date()) + "-x-x ERRO: ";
+        String info = Math.random() + " -x-x- " + (new Date()) + " ERRO: ";
         LOGGER.error(info + exception.getClass().getName() + "\n");
         LOGGER.error(info + ExceptionUtils.getStackTrace(exception));
     }
@@ -47,7 +51,17 @@ public class ControllerExceptionHandler {
     @ResponseBody
     public LutzExceptionResponse handle(DataIntegrityViolationException exception) {
         externalLog(exception);
-        return new LutzExceptionResponse("Já existe um registro com essas informações.", null);
+
+        if (exception.getMessage().toLowerCase().contains("not-null")) {
+            String field = exception.getMessage()
+                    .substring(exception.getMessage().indexOf(":"));
+
+            field = field.substring(field.lastIndexOf(".") + 1); // pega o campo que está nulo
+
+            return new LutzExceptionResponse("O campo não pode ser nulo", field);
+        }
+
+        return new LutzExceptionResponse("Não foi possível gravar o registro.", null);
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -63,19 +77,19 @@ public class ControllerExceptionHandler {
         return new LutzExceptionResponse("API do Mocky retornou 404", null);
     }
 
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    // TODO alterar esse retorno para um LutzExceptionResponse
-//    public Map<String, String> handle(MethodArgumentNotValidException exception) {
-//        externalLog(exception);
-//
-//        Map<String, String> errors = new HashMap<>();
-//        exception.getBindingResult().getAllErrors().forEach((error) -> {
-//            String fieldName = ((FieldError) error).getField();
-//            String errorMessage = error.getDefaultMessage();
-//            errors.put(fieldName, errorMessage);
-//        });
-//
-//        return errors;
-//    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    // TODO alterar esse retorno para um LutzExceptionResponse
+    public LutzExceptionResponse handle(MethodArgumentNotValidException exception) {
+        externalLog(exception);
+
+        Map<String, String> errors = new HashMap<>();
+        exception.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        return new LutzExceptionResponse("Há erros com os valores enviados.", errors);
+    }
 }

@@ -2,7 +2,6 @@ package com.lutzapi.application.services;
 
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.domain.entities.user.User;
-import com.lutzapi.domain.entities.user.UserType;
 import com.lutzapi.domain.exceptions.BadDataException;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
@@ -73,16 +72,16 @@ public class UserServiceTest {
     @Test
     @DisplayName("Should return the user that was just created")
     public void itShouldReturnCreatedUser() {
-        UserDTO userDTOMock = new UserDTO("mock", "mock", "mock", "mock", UserType.BUYER, BigDecimal.ONE);
+        User userDTOMock = mock(User.class);
         User userMock = mock(User.class);
 
-        when(userMock.getEmail()).thenReturn(userDTOMock.email());
+        when(userMock.getEmail()).thenReturn(userDTOMock.getEmail());
         when(userRepoMock.save(any(User.class))).thenReturn(userMock);
 
         User response = sut.createUser(userDTOMock);
 
         assertInstanceOf(User.class, response);
-        assertEquals(response.getEmail(), userDTOMock.email());
+        assertEquals(response.getEmail(), userDTOMock.getEmail());
     }
 
     @Test
