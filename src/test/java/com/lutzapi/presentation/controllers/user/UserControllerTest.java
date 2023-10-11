@@ -87,11 +87,13 @@ public class UserControllerTest {
     @Test
     @DisplayName("Should create an User and return 201")
     public void itShouldThrowWhenCreatingUserWithMissingData() throws Exception {
-        ObjectMapper om = new ObjectMapper();
         UserDTO user = mock(UserDTO.class);
+        when(user.email()).thenReturn("email@mock.com");
+        when(user.firstName()).thenReturn("Mock");
+        when(user.document()).thenReturn("123");
 
+        ObjectMapper om = new ObjectMapper();
         String jsonUser = om.writeValueAsString(user);
-
         this.mockMvc.perform(post("/users")
                         .content(jsonUser)
                         .contentType(MediaType.APPLICATION_JSON))

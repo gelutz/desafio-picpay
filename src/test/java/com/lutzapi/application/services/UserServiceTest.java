@@ -72,16 +72,16 @@ public class UserServiceTest {
     @Test
     @DisplayName("Should return the user that was just created")
     public void itShouldReturnCreatedUser() {
-        User userDTOMock = mock(User.class);
+        String email = "email@mock.com";
         User userMock = mock(User.class);
 
-        when(userMock.getEmail()).thenReturn(userDTOMock.getEmail());
+        when(userMock.getEmail()).thenReturn(email);
         when(userRepoMock.save(any(User.class))).thenReturn(userMock);
 
-        User response = sut.createUser(userDTOMock);
+        User response = sut.createUser(userMock);
 
         assertInstanceOf(User.class, response);
-        assertEquals(response.getEmail(), userDTOMock.getEmail());
+        assertEquals(response.getEmail(), email);
     }
 
     @Test
