@@ -1,8 +1,8 @@
 package com.lutzapi.application.services;
 
-import com.lutzapi.application.adapters.MockyAdapter;
-import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.application.dtos.TransactionDTO;
+import com.lutzapi.application.gateways.APIGatewayDTO;
+import com.lutzapi.application.gateways.FakeGateway;
 import com.lutzapi.domain.entities.transaction.Transaction;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserType;
@@ -24,7 +24,7 @@ import java.util.Optional;
 public class TransactionService {
     private TransactionRepository transactionRepository;
     private UserService userService;
-    private MockyAdapter apiAdapter;
+    private FakeGateway apiAdapter;
 
     public Transaction createTransaction(TransactionDTO transaction) {
         validateTransactionFields(transaction);
@@ -64,7 +64,7 @@ public class TransactionService {
     }
 
     public boolean validateTransaction() {
-        MockyTransactionDTO response = apiAdapter.call();
+        APIGatewayDTO response = apiAdapter.call();
         return response.message().equals("Autorizado");
     }
 }
