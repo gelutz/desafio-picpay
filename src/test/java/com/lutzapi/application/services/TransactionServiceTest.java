@@ -1,8 +1,8 @@
 package com.lutzapi.application.services;
 
-import com.lutzapi.application.adapters.MockyAdapter;
-import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.application.dtos.TransactionDTO;
+import com.lutzapi.application.gateways.APIGatewayDTO;
+import com.lutzapi.application.gateways.FakeGateway;
 import com.lutzapi.domain.entities.transaction.Transaction;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserType;
@@ -30,7 +30,7 @@ public class TransactionServiceTest {
     @Mock
     private UserService userServiceMock;
     @Mock
-    private MockyAdapter adapterMock;
+    private FakeGateway adapterMock;
 
     @BeforeEach
     public void setUp() {
@@ -68,7 +68,7 @@ public class TransactionServiceTest {
 
         when(userServiceMock.findById(transactionDTO.buyerId())).thenReturn(buyer);
         when(userServiceMock.findById(transactionDTO.sellerId())).thenReturn(seller);
-        when(adapterMock.call()).thenReturn(new MockyTransactionDTO("Autorizado"));
+        when(adapterMock.call()).thenReturn(new APIGatewayDTO("Autorizado"));
 
         when(transactionRepoMock.save(any(Transaction.class))).thenReturn(mock(Transaction.class));
         Transaction response = sut.createTransaction(transactionDTO);

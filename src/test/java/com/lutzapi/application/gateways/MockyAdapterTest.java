@@ -1,6 +1,5 @@
-package com.lutzapi.application.adapters;
+package com.lutzapi.application.gateways;
 
-import com.lutzapi.application.dtos.MockyTransactionDTO;
 import com.lutzapi.domain.exceptions.mocky.MockyAuthException;
 import com.lutzapi.domain.exceptions.mocky.MockyDefaultExceptin;
 import com.lutzapi.infrastructure.repositories.templates.RestTemplate;
@@ -19,22 +18,22 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ActiveProfiles("test")
 public class MockyAdapterTest {
-    private MockyAdapter sut;
+    private MockyGateway sut;
     @Mock
     private RestTemplate templateMock;
 
     @BeforeEach
     public void setUp() {
-        sut = new MockyAdapter(templateMock);
+        sut = new MockyGateway(templateMock);
     }
 
     @Test
     @DisplayName("Caso dê algum problema com a Mocky API e não retornar status code 200")
     public void validationShouldThrowIfErrorInTransaction(){
-        MockyTransactionDTO mockedDTO = new MockyTransactionDTO("Mocked message");
-        ResponseEntity<MockyTransactionDTO> mockedResponseEntity = new ResponseEntity<>(mockedDTO, HttpStatus.BAD_REQUEST);
+        APIGatewayDTO mockedDTO = new APIGatewayDTO("Mocked message");
+        ResponseEntity<APIGatewayDTO> mockedResponseEntity = new ResponseEntity<>(mockedDTO, HttpStatus.BAD_REQUEST);
 
-        when(templateMock.getForEntity(sut.getUrl(), MockyTransactionDTO.class))
+        when(templateMock.getForEntity(sut.getUrl(), APIGatewayDTO.class))
                         .thenReturn(mockedResponseEntity);
 
         assertThrows(MockyDefaultExceptin.class, () -> sut.call());
@@ -43,10 +42,10 @@ public class MockyAdapterTest {
     @Test
     @DisplayName("Deve lançar o erro MockyAuthException se não houver 'Autorizado' no response")
     public void validationShouldThrowIfNotAuthorized(){
-        MockyTransactionDTO mockedDTO = new MockyTransactionDTO("Mocked message");
-        ResponseEntity<MockyTransactionDTO> mockedResponseEntity = new ResponseEntity<>(mockedDTO, HttpStatus.OK);
+        APIGatewayDTO mockedDTO = new APIGatewayDTO("Mocked message");
+        ResponseEntity<APIGatewayDTO> mockedResponseEntity = new ResponseEntity<>(mockedDTO, HttpStatus.OK);
 
-        when(templateMock.getForEntity(sut.getUrl(), MockyTransactionDTO.class))
+        when(templateMock.getForEntity(sut.getUrl(), APIGatewayDTO.class))
                 .thenReturn(mockedResponseEntity);
 
         assertThrows(MockyAuthException.class, () -> sut.call());

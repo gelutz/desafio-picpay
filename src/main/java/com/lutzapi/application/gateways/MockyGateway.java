@@ -1,7 +1,6 @@
-package com.lutzapi.application.adapters;
+package com.lutzapi.application.gateways;
 
-import com.lutzapi.application.dtos.MockyTransactionDTO;
-import com.lutzapi.application.interfaces.ApiAdapter;
+import com.lutzapi.application.interfaces.ApiGateway;
 import com.lutzapi.domain.exceptions.mocky.MockyAuthException;
 import com.lutzapi.domain.exceptions.mocky.MockyDefaultExceptin;
 import lombok.Getter;
@@ -16,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 @Getter
 @RequiredArgsConstructor
 @Component
-public class MockyAdapter implements ApiAdapter {
+public class MockyGateway implements ApiGateway {
     private final RestTemplate template;
 
     @Value("${mocky.url}")
@@ -24,8 +23,8 @@ public class MockyAdapter implements ApiAdapter {
 
     @Override
     @SuppressWarnings("unchecked")
-    public MockyTransactionDTO call() {
-        ResponseEntity<MockyTransactionDTO> response = template.getForEntity(url, MockyTransactionDTO.class);
+    public APIGatewayDTO call() {
+        ResponseEntity<APIGatewayDTO> response = template.getForEntity(url, APIGatewayDTO.class);
         if (response == null || response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
             throw new MockyDefaultExceptin("Erro na transação");
         }

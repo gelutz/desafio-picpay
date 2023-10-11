@@ -43,8 +43,6 @@ public class UserService {
     }
 
     public User updateUser(UUID id, UserDTO userData) {
-        validateUserData(userData);
-
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Buyer ID", id + ""));
 
@@ -61,6 +59,7 @@ public class UserService {
         if (userData.type() != null)
             user.setType(userData.type());
 
+        validateUserData(userData);
         return userRepository.save(user);
     }
 
