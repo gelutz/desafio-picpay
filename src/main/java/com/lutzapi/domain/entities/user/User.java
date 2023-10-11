@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -41,13 +40,11 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @ColumnDefault("BUYER")
-    private UserType type;
+    private UserType type = UserType.BUYER;
 
     @JsonIgnore
     @Column
-    @ColumnDefault("0")
-    private BigDecimal balance;
+    private BigDecimal balance = BigDecimal.ZERO;
 
     @CreationTimestamp
     @Setter(AccessLevel.NONE)
