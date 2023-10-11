@@ -2,7 +2,6 @@ package com.lutzapi.application.services;
 
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.domain.entities.user.User;
-import com.lutzapi.domain.exceptions.BadDataException;
 import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
@@ -87,7 +86,7 @@ public class UserService {
 
     public void addBalance(User user, BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new BadDataException("O valor não pode ser negativo/zero.");
+            throw new RuntimeException("O valor não pode ser negativo/zero.");
         }
 
         user.setBalance(user.getBalance().add(amount));

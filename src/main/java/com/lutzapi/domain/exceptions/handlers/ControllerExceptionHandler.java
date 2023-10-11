@@ -16,27 +16,24 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
-    Logger LOGGER = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
-    protected void externalLog(Class baseException, Exception exception) {
-        String info = Math.random() + " -x-x- " + (new Date()) + " ERRO: ";
-        LOGGER.error(
-                "Exception: " + baseException.getName(),
-                info + exception.getClass().getName() + "\n" + ExceptionUtils.getStackTrace(exception)
-        );
+    protected void externalLog(Exception exception) {
+        Logger LOGGER = LoggerFactory.getLogger(exception.getClass());
+        System.out.println("-x-x-x:x-x-x-");
+        LOGGER.error(ExceptionUtils.getStackTrace(exception));
+        System.out.println("-x-x-x:x-x-x-");
     }
 
     @ExceptionHandler(value = {RuntimeException.class, Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public LutzExceptionResponse handle(Exception exception) {
-        externalLog(exception.getClass(), exception);
+        externalLog(exception);
         return new LutzExceptionResponse(exception.getMessage(), null);
     }
 
@@ -44,7 +41,7 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public LutzExceptionResponse handle(MissingDataException exception) {
-        externalLog(MissingDataException.class, exception);
+        externalLog(exception);
         return new LutzExceptionResponse(exception.getMessage(), exception.getFields());
     }
 
@@ -52,7 +49,7 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
     public LutzExceptionResponse handle(DataIntegrityViolationException exception) {
-        externalLog(DataIntegrityViolationException.class, exception);
+        externalLog(exception);
 
         if (exception.getMessage().toLowerCase().contains("not-null")) {
             String field = exception.getMessage()
@@ -69,13 +66,13 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public LutzExceptionResponse handle(NotFoundException exception) {
-        externalLog(DataIntegrityViolationException.class, exception);
+        externalLog(exception);
         return new LutzExceptionResponse("Não foi possível encontrar o registro com esse " + exception.getMessage(), exception.getKey());
     }
 
     @ExceptionHandler(HttpClientErrorException.class)
     public LutzExceptionResponse handle(HttpClientErrorException exception) {
-        externalLog(DataIntegrityViolationException.class, exception);
+        externalLog(exception);
         return new LutzExceptionResponse("API do Mocky retornou 404", null);
     }
 
@@ -83,7 +80,7 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     // TODO alterar esse retorno para um LutzExceptionResponse
     public LutzExceptionResponse handle(MethodArgumentNotValidException exception) {
-        externalLog(DataIntegrityViolationException.class, exception);
+        externalLog(exception);
 
         Map<String, String> errors = new HashMap<>();
         exception.getBindingResult().getAllErrors().forEach((error) -> {
