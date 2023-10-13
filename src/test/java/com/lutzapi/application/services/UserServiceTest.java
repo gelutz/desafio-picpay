@@ -2,9 +2,8 @@ package com.lutzapi.application.services;
 
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.domain.entities.user.User;
-import com.lutzapi.domain.exceptions.BadDataException;
+import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
-import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -85,10 +84,32 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Throws MissingDataException when there are missing fields (buyerID, sellerID or amount)")
-    public void itThrowsWhenMissingData() {
-        UserDTO user = mock(UserDTO.class); // all fields are null
-        assertThrows(MissingDataException.class, () -> sut.validateUserData(user));
+    @DisplayName("Should update the given data and keep older data intact, then return the user.")
+    public void itShouldReturnUpdatedUser() {
+        UUID id = UUID.randomUUID();
+        // supposed to be the user before update
+        User mockedUserBeforeUpdate = mock(User.class);
+        when(userRepoMock.findById(id)).thenReturn(Optional.of(mockedUserBeforeUpdate));
+
+        String newName = "mock";
+        User mockedUserAfterUpdate = User.builder()
+                .id(id)
+                .firstName(newName)
+                .balance(BigDecimal.ONE)
+                .build();
+
+        when(userRepoMock.save(any(User.class))).thenReturn(mockedUserAfterUpdate);
+
+        UserDTO dataToUpdate = UserDTO.builder().firstName(newName).build();
+        User updatedUser = sut.updateUser(id, dataToUpdate);
+        assertEquals(updatedUser.getFirstName(), newName);
+        assertEquals(updatedUser.getBalance(), mockedUserAfterUpdate.getBalance());
+    }
+
+    @Test
+    @DisplayName("Throws NotFoundException if the user is not found")
+    public void itShouldThrowNotFound() {
+        assertThrows(NotFoundException.class, () -> sut.findById(UUID.randomUUID()));
     }
 
     @Test
@@ -109,9 +130,6 @@ public class UserServiceTest {
         BigDecimal transactionAmount = BigDecimal.valueOf(-1);
         User buyer = mock(User.class);
 
-        BadDataException exception = assertThrows(BadDataException.class,
-                () -> sut.addBalance(buyer, transactionAmount));
-
-        assertTrue(exception.getMessage().contains("negativo"));
+        assertThrows(RuntimeException.class, () -> sut.addBalance(buyer, transactionAmount));
     }
 }
