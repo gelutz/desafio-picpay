@@ -4,15 +4,11 @@ import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
-import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -58,21 +54,7 @@ public class UserService {
         if (userData.type() != null)
             user.setType(userData.type());
 
-        validateUserData(userData);
         return userRepository.save(user);
-    }
-
-    public void validateUserData(UserDTO user) {
-        List<String> emptyFields = new ArrayList<>();
-        if (StringUtils.isBlank(user.firstName()))
-            emptyFields.add("First name");
-        if (StringUtils.isBlank(user.document()))
-            emptyFields.add("Document");
-        if (StringUtils.isBlank(user.email()))
-            emptyFields.add("Email");
-
-        if (!emptyFields.isEmpty())
-            throw new MissingDataException(emptyFields);
     }
 
     public void subtractBalance(User user, BigDecimal amount) {
