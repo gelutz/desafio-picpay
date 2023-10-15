@@ -7,6 +7,7 @@ import com.lutzapi.security.services.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -60,9 +61,9 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(mvc.pattern("/auth/**")).permitAll()
+                        auth.requestMatchers(mvc.pattern(HttpMethod.OPTIONS, "/auth/**")).permitAll()
+                                .requestMatchers(mvc.pattern("/auth/**")).permitAll()
                                 .requestMatchers(mvc.pattern("/users/seed")).permitAll()
-                                .requestMatchers(mvc.pattern("/h2-console")).permitAll()
                                 .anyRequest().authenticated()
                 );
 

@@ -5,6 +5,7 @@ import com.lutzapi.domain.entities.user.User;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -18,6 +19,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @GetMapping
+    @PreAuthorize("hasRole('BUYER') or hasRole('SELLER')")
     public Iterable<User> list() {
         return userService.getAllUsers();
     }

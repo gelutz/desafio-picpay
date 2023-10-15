@@ -32,7 +32,7 @@ public class UserDetailsImpl implements UserDetails {
 
     public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getType().toString()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getType().name()));
 
         return new UserDetailsImpl(
                 user.getId(),
