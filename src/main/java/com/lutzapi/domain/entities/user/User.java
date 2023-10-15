@@ -31,6 +31,10 @@ public class User {
 
     @Column(unique = true, nullable = false)
     @NotBlank
+    private String username;
+
+    @Column(unique = true, nullable = false)
+    @NotBlank
     private String document;
 
     @Column(unique = true, nullable = false)

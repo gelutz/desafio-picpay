@@ -1,6 +1,5 @@
-package com.lutzapi.domain.exceptions.handlers;
+package com.lutzapi.domain.exceptions;
 
-import com.lutzapi.domain.exceptions.LutzExceptionResponse;
 import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import org.apache.commons.lang3.exception.ExceptionUtils;

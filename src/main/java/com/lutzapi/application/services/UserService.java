@@ -22,7 +22,12 @@ public class UserService {
 
     public User findById(UUID id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Buyer ID", id + ""));
+                .orElseThrow(() -> new NotFoundException("Buyer ID", id.toString()));
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Username", username));
     }
 
     public User createUser(User user) {
