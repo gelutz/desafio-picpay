@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.application.services.UserService;
 import com.lutzapi.domain.entities.user.User;
-import com.lutzapi.domain.exceptions.handlers.ControllerExceptionHandler;
+import com.lutzapi.domain.exceptions.ControllerExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

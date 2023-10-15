@@ -1,2 +1,4 @@
 [] adicionar uma validação customizada para receber apenas números e símbolos no document
     [] depois adicionar os testes necessários para verificar se está funcionando
+
+[] adicionar função que cria um User a partir de um UserDTO (User.fromDTO)
