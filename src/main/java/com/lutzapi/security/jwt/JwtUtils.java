@@ -2,7 +2,6 @@ package com.lutzapi.security.jwt;
 
 import com.lutzapi.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,7 +58,7 @@ public class JwtUtils {
     }
 
     private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+        return Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
 
     public boolean validateJwtToken(String authToken) {

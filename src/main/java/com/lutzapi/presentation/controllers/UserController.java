@@ -1,6 +1,5 @@
 package com.lutzapi.presentation.controllers;
 
-import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.application.services.UserService;
 import com.lutzapi.domain.entities.user.User;
 import jakarta.validation.Valid;
@@ -38,8 +37,8 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @PutMapping("/{id}")
-    public User update(@PathVariable UUID id, @RequestBody UserDTO user) {
-        return userService.updateUser(id, user);
+    @PostMapping("/seed")
+    public User seed() {
+        return userService.seedDatabase();
     }
 }

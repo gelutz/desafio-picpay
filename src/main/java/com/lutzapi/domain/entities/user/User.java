@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -41,7 +42,7 @@ public class User {
     @Email
     private String email;
 
-    @JsonIgnore
+    //    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -58,4 +59,21 @@ public class User {
     @UpdateTimestamp
     @Setter(AccessLevel.NONE)
     private Instant updatedAt;
+
+    // model não deveria importar o serviço do BCrypt direto, quebra a clean architecture
+    // TODO: ajustar
+    public void setPassword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        this.password = encoder.encode(password);
+    }
+
+    public static class UserBuilder {
+        // TODO: mesma situação do TODO acima, ajustar
+        public UserBuilder password(String password) {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            this.password = encoder.encode(password);
+            return this;
+        }
+    }
+
 }
