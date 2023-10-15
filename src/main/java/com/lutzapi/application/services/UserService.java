@@ -2,6 +2,7 @@ package com.lutzapi.application.services;
 
 import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.domain.entities.user.User;
+import com.lutzapi.domain.entities.user.UserType;
 import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
@@ -78,5 +79,18 @@ public class UserService {
 
         user.setBalance(user.getBalance().add(amount));
         userRepository.save(user);
+    }
+
+    public User seedDatabase() {
+        User user = User.builder()
+                .firstName("admin")
+                .username("admin")
+                .email("admin@email.com")
+                .password("admin")
+                .document(".")
+                .type(UserType.BUYER)
+                .build();
+
+        return userRepository.save(user);
     }
 }

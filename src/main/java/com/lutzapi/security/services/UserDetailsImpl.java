@@ -25,10 +25,10 @@ public class UserDetailsImpl implements UserDetails {
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    private boolean accountNonExpired;
-    private boolean accountNonLocked;
-    private boolean credentialsNonExpired;
-    private boolean enabled;
+    private final boolean accountNonExpired = true;
+    private final boolean accountNonLocked = true;
+    private final boolean credentialsNonExpired = true;
+    private final boolean enabled = true;
 
     public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -41,5 +41,4 @@ public class UserDetailsImpl implements UserDetails {
                 user.getPassword(),
                 authorities);
     }
-
 }

@@ -42,4 +42,11 @@ public class UserController {
     public User update(@PathVariable UUID id, @Valid @RequestBody UserDTO user) {
         return userService.updateUser(id, user);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @PostMapping("/seed")
+    public User seed() {
+        return userService.seedDatabase();
+    }
 }

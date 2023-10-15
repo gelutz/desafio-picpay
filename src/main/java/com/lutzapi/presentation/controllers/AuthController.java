@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    AuthenticationManager authenticationManager;
-    AuthService authService;
-    JwtUtils jwtUtils;
+    final AuthenticationManager authenticationManager;
+    final AuthService authService;
+    final JwtUtils jwtUtils;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDTO loginRequest) {
