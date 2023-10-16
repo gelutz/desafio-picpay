@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 // essa anotação do lombok cria um constructor com os campos que não são final
@@ -25,6 +26,18 @@ public class TransactionService {
     private TransactionRepository transactionRepository;
     private UserService userService;
     private FakeGateway apiAdapter;
+
+
+    public Transaction findById(Long id) {
+        return transactionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Buyer ID", id + ""));
+    }
+
+    public List<Transaction> findAllByUserId(UUID userId) {
+        User user = userService.findById(userId);
+        return null;
+//        return transactionRepository.findAllByBuyerOrSeller(user);
+    }
 
     public Transaction createTransaction(TransactionDTO transaction) {
         validateTransactionFields(transaction);
