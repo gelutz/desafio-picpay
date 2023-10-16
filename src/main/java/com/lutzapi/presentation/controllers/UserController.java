@@ -39,7 +39,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @PutMapping("/{id}")
-    public User update(@PathVariable UUID id, @RequestBody UserDTO user) {
+    public User update(@PathVariable UUID id, @Valid @RequestBody UserDTO user) {
         return userService.updateUser(id, user);
     }
 }
