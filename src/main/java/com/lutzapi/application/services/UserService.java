@@ -20,21 +20,18 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("username", username));
+    }
+
     public User findById(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Buyer ID", id + ""));
     }
 
     public User createUser(User user) {
-        User newUser = new User();
-        newUser.setFirstName(user.getFirstName());
-        newUser.setLastName(user.getLastName());
-        newUser.setDocument(user.getDocument());
-        newUser.setEmail(user.getEmail());
-        newUser.setType(user.getType());
-        newUser.setBalance(user.getBalance() != null ? user.getBalance() : BigDecimal.valueOf(0));
-
-        return userRepository.save(newUser);
+        return userRepository.save(user);
     }
 
     public User updateUser(UUID id, UserDTO userData) {
