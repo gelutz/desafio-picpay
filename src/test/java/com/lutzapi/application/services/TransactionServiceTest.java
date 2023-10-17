@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +36,18 @@ public class TransactionServiceTest {
     @BeforeEach
     public void setUp() {
         sut = new TransactionService(transactionRepoMock, userServiceMock, adapterMock);
+    }
+
+    @Test
+    @DisplayName("Deve buscar uma transaction pelo ID dela")
+    public void itShouldFindATransaction() {
+        Transaction mockedTransaction = Transaction.builder()
+                .amount(BigDecimal.ONE)
+                .build();
+        when(transactionRepoMock.findById(anyLong())).thenReturn(Optional.of(mockedTransaction));
+
+        Transaction found = sut.findById(1L);
+        assertEquals(found.getAmount(), mockedTransaction.getAmount());
     }
 
     @Test

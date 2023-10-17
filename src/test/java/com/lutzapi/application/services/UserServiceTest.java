@@ -87,7 +87,6 @@ public class UserServiceTest {
     @DisplayName("Should update the given data and keep older data intact, then return the user.")
     public void itShouldReturnUpdatedUser() {
         UUID id = UUID.randomUUID();
-        // supposed to be the user before update
         User mockedUserBeforeUpdate = mock(User.class);
         when(userRepoMock.findById(id)).thenReturn(Optional.of(mockedUserBeforeUpdate));
 
@@ -113,7 +112,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Throws if the user doesnt have enough balance.")
+    @DisplayName("Throws InsufficientFundsException if the user doesnt have enough balance.")
     public void itShouldThrowIfUserDoesntHaveBalance(){
         BigDecimal userBalance = BigDecimal.valueOf(1);
         BigDecimal transactionAmount = userBalance.add(BigDecimal.valueOf(1));
@@ -125,7 +124,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Throws if the amount to be added is negative.")
+    @DisplayName("Throws RuntimeException if the amount to be added is negative.")
     public void itShouldThrowIfAmountIsNegative() {
         BigDecimal transactionAmount = BigDecimal.valueOf(-1);
         User buyer = mock(User.class);

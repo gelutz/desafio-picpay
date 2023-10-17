@@ -13,6 +13,13 @@ import org.springframework.web.bind.annotation.*;
 public class TransactionController {
     private TransactionService transactionService;
 
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @GetMapping
+    public Transaction findTransaction(@RequestBody TransactionDTO transaction) {
+        return null;
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     @PostMapping

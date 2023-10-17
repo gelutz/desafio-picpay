@@ -14,11 +14,11 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Data
+@Builder
 @Entity(name = "users")
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
