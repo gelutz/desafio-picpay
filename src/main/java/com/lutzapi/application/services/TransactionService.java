@@ -1,6 +1,6 @@
 package com.lutzapi.application.services;
 
-import com.lutzapi.application.dtos.TransactionDTO;
+import com.lutzapi.application.dtos.CreateTransactionDTO;
 import com.lutzapi.application.gateways.APIGatewayDTO;
 import com.lutzapi.application.gateways.FakeGateway;
 import com.lutzapi.domain.entities.transaction.Transaction;
@@ -39,7 +39,7 @@ public class TransactionService {
 //        return transactionRepository.findAllByBuyerOrSeller(user);
     }
 
-    public Transaction createTransaction(TransactionDTO transaction) {
+    public Transaction createTransaction(CreateTransactionDTO transaction) {
         validateTransactionFields(transaction);
 
         User buyer = Optional.of(userService.findById(transaction.buyerId()))
@@ -67,7 +67,7 @@ public class TransactionService {
         return null;
     }
 
-    public void validateTransactionFields(TransactionDTO transaction) {
+    public void validateTransactionFields(CreateTransactionDTO transaction) {
         List<String> emptyFields = new ArrayList<>();
         if (transaction.buyerId() == null) emptyFields.add("Buyer ID");
         if (transaction.sellerId() == null) emptyFields.add("Seller ID");
