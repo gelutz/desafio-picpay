@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(ControllerExceptionHandler.class)
 public class UserControllerTest {
     @MockBean
-    private UserService userService;
+    private UserService userServiceMock;
     @Autowired
     private MockMvc mockMvc;
     @Test
@@ -60,7 +60,7 @@ public class UserControllerTest {
         users.add(mockUser1);
         users.add(mockUser2);
 
-        when(userService.getAllUsers()).thenReturn(users);
+        when(userServiceMock.getAllUsers()).thenReturn(users);
         this.mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(uuid1.toString()))
@@ -74,7 +74,7 @@ public class UserControllerTest {
         UUID uuid = UUID.randomUUID();
         when(mockUser1.getId()).thenReturn(uuid);
 
-        when(userService.findById(mockUser1.getId())).thenReturn(mockUser1);
+        when(userServiceMock.findById(mockUser1.getId())).thenReturn(mockUser1);
         this.mockMvc.perform(get("/users/" + uuid))
                 .andExpect(status().isFound())
                 .andDo(print())
@@ -83,7 +83,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.balance").doesNotExist());
     }
 
-    // todo this test is a false positive
     @Test
     @DisplayName("Should create an User and return 201")
     public void itShouldThrowWhenCreatingUserWithMissingData() throws Exception {
@@ -94,6 +93,7 @@ public class UserControllerTest {
 
         ObjectMapper om = new ObjectMapper();
         String jsonUser = om.writeValueAsString(user);
+
         this.mockMvc.perform(post("/users")
                         .content(jsonUser)
                         .contentType(MediaType.APPLICATION_JSON))
