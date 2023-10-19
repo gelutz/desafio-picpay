@@ -15,9 +15,8 @@ public class TransactionController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @PostMapping
+    @GetMapping
     public Transaction findTransaction(@RequestBody TransactionDTO transaction) {
-
         return null;
     }
 

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
@@ -31,10 +32,12 @@ public class UserServiceTest {
     private UserService sut;
     @Mock
     private UserRepository userRepoMock;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     public void setUp() {
-        sut = new UserService(userRepoMock);
+        sut = new UserService(userRepoMock, passwordEncoder);
     }
 
     @Test
