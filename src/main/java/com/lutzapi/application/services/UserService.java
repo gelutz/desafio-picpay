@@ -6,6 +6,8 @@ import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,6 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserService {
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
@@ -25,6 +28,11 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("Buyer ID", id + ""));
     }
 
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Buyer ID", email));
+    }
+
     public User createUser(User user) {
         User newUser = new User();
         newUser.setFirstName(user.getFirstName());
@@ -32,7 +40,7 @@ public class UserService {
         newUser.setDocument(user.getDocument());
         newUser.setEmail(user.getEmail());
         newUser.setType(user.getType());
-        newUser.setBalance(user.getBalance() != null ? user.getBalance() : BigDecimal.valueOf(0));
+        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepository.save(newUser);
     }
