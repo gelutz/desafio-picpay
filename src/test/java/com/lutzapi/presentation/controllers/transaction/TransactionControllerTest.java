@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -41,6 +42,7 @@ class TransactionControllerTest {
 
     @Test
     @DisplayName("Should return the created transaction")
+    @WithMockUser(username = "admin", password = "123")
     void createTransaction() throws Exception {
         BigDecimal amount = BigDecimal.valueOf(1);
         CreateTransactionDTO createTransactionDTO = new CreateTransactionDTO(amount, UUID.randomUUID(), UUID.randomUUID());

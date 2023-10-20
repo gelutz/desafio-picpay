@@ -5,6 +5,7 @@ import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.application.services.UserService;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.exceptions.handlers.ControllerExceptionHandler;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -38,8 +40,15 @@ public class UserControllerTest {
     private UserService userServiceMock;
     @Autowired
     private MockMvc mockMvc;
+
+    @BeforeAll
+    public static void setup() {
+
+    }
+
     @Test
     @DisplayName("The endpoint should return an empty list when there are no users")
+    @WithMockUser(username = "admin", password = "admin")
     public void itShouldReturnAnEmptyArray() throws Exception {
         this.mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
@@ -48,6 +57,7 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("The endpoint should return a list of existing users")
+    @WithMockUser(username = "admin", password = "admin")
     public void itShouldReturnAListOfUsers() throws Exception {
         User mockUser1 = mock(User.class);
         User mockUser2 = mock(User.class);
@@ -69,6 +79,7 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("The endpoint should return the user with given ID")
+    @WithMockUser(username = "admin", password = "admin")
     public void itShouldReturnUserWithGivenId() throws Exception {
         User mockUser1 = mock(User.class);
         UUID uuid = UUID.randomUUID();
@@ -85,6 +96,7 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Should create an User and return 201")
+    @WithMockUser(username = "admin", password = "admin")
     public void itShouldThrowWhenCreatingUserWithMissingData() throws Exception {
         UserDTO user = mock(UserDTO.class);
         when(user.email()).thenReturn("email@mock.com");
