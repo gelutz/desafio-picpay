@@ -1,6 +1,6 @@
 package com.lutzapi.application.services;
 
-import com.lutzapi.application.dtos.TransactionDTO;
+import com.lutzapi.application.dtos.CreateTransactionDTO;
 import com.lutzapi.application.gateways.APIGatewayDTO;
 import com.lutzapi.application.gateways.FakeGateway;
 import com.lutzapi.domain.entities.transaction.Transaction;
@@ -53,7 +53,7 @@ public class TransactionServiceTest {
     @Test
     @DisplayName("Deve lançar uma MissingDataException com cada campo que falta (buyerId, sellerId, amount)")
     public void itShouldThrowIfMissingData() {
-        TransactionDTO transactionDTO = new TransactionDTO(null, null, null);
+        CreateTransactionDTO transactionDTO = new CreateTransactionDTO(null, null, null);
 
         MissingDataException exception = assertThrows(MissingDataException.class,
                 () -> sut.validateTransactionFields(transactionDTO));
@@ -67,7 +67,7 @@ public class TransactionServiceTest {
     @Test
     @DisplayName("Deve retornar uma transaction se a API validar")
     public void itShouldReturnTransactionIfValidated() {
-        TransactionDTO transactionDTO = new TransactionDTO(BigDecimal.ONE, UUID.randomUUID(), UUID.randomUUID());
+        CreateTransactionDTO transactionDTO = new CreateTransactionDTO(BigDecimal.ONE, UUID.randomUUID(), UUID.randomUUID());
 
         User buyer = mock(User.class);
         when(buyer.getId()).thenReturn(transactionDTO.buyerId());

@@ -1,7 +1,7 @@
 package com.lutzapi.presentation.controllers.transaction;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lutzapi.application.dtos.TransactionDTO;
+import com.lutzapi.application.dtos.CreateTransactionDTO;
 import com.lutzapi.application.services.TransactionService;
 import com.lutzapi.domain.entities.transaction.Transaction;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +43,7 @@ class TransactionControllerTest {
     @DisplayName("Should return the created transaction")
     void createTransaction() throws Exception {
         BigDecimal amount = BigDecimal.valueOf(1);
-        TransactionDTO transactionDTO = new TransactionDTO(amount, UUID.randomUUID(), UUID.randomUUID());
+        CreateTransactionDTO transactionDTO = new CreateTransactionDTO(amount, UUID.randomUUID(), UUID.randomUUID());
         Transaction transactionMock = mock(Transaction.class);
 
         when(transactionMock.getId()).thenReturn(1L);
