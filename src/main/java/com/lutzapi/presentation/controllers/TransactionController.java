@@ -29,10 +29,8 @@ public class TransactionController {
         }
 
         return transactions.stream().map((transaction) ->
-                Objects.equals(transaction.getId(), transactionDTO.transactionId())
-                        ? transaction
-                        : null
-        ).collect(Collectors.toList());
+                        Objects.equals(transaction.getId(), transactionDTO.transactionId()) ? transaction : null)
+                .collect(Collectors.toList());
     }
 
     @ResponseStatus(HttpStatus.CREATED)
