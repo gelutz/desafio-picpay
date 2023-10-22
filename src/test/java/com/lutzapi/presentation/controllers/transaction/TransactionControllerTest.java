@@ -51,7 +51,7 @@ class TransactionControllerTest {
         when(transactionMock.getId()).thenReturn(1L);
         when(transactionMock.getAmount()).thenReturn(amount);
         when(transactionService.validateTransaction()).thenReturn(true);
-        when(transactionService.createTransaction(transactionDTO)).thenReturn(transactionMock);
+        when(transactionService.saveTransaction(transactionDTO)).thenReturn(transactionMock);
 
         ObjectMapper om = new ObjectMapper();
         String jsonTransaction = om.writeValueAsString(transactionDTO);

@@ -39,7 +39,7 @@ public class TransactionService {
 //        return transactionRepository.findAllByBuyerOrSeller(user);
     }
 
-    public Transaction createTransaction(CreateTransactionDTO transaction) {
+    public Transaction saveTransaction(CreateTransactionDTO transaction) {
         validateTransactionFields(transaction);
 
         User buyer = Optional.of(userService.findById(transaction.buyerId()))

@@ -11,7 +11,7 @@ import java.util.List;
 public class MissingDataException extends RuntimeException {
     final List<String> fields;
     public MissingDataException(List<String> fields) {
-        super("Os seguintes campos estão faltando");
+        super("Os seguintes campos estão faltando: " + fields);
         this.fields = fields;
     }
 }
