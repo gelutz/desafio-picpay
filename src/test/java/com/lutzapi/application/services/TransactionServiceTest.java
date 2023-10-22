@@ -84,7 +84,7 @@ public class TransactionServiceTest {
         when(adapterMock.call()).thenReturn(new APIGatewayDTO("Autorizado"));
 
         when(transactionRepoMock.save(any(Transaction.class))).thenReturn(mock(Transaction.class));
-        Transaction response = sut.createTransaction(transactionDTO);
+        Transaction response = sut.saveTransaction(transactionDTO);
 
         assertInstanceOf(Transaction.class, response);
     }

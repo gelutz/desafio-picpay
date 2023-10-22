@@ -23,7 +23,7 @@ public class AuthenticationService {
                 .password(input.password())
                 .build();
 
-        return userService.createUser(user);
+        return userService.saveUser(user);
     }
 
     public User authenticate(UserLoginDTO input) {
