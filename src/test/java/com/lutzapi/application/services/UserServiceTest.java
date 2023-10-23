@@ -3,7 +3,6 @@ package com.lutzapi.application.services;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserDTO;
 import com.lutzapi.domain.exceptions.repository.NotFoundException;
-import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -112,26 +111,5 @@ public class UserServiceTest {
     @DisplayName("Throws NotFoundException if the user is not found")
     public void itShouldThrowNotFound() {
         assertThrows(NotFoundException.class, () -> sut.findById(UUID.randomUUID()));
-    }
-
-    @Test
-    @DisplayName("Throws InsufficientFundsException if the user doesnt have enough balance.")
-    public void itShouldThrowIfUserDoesntHaveBalance(){
-        BigDecimal userBalance = BigDecimal.valueOf(1);
-        BigDecimal transactionAmount = userBalance.add(BigDecimal.valueOf(1));
-        User buyer = mock(User.class);
-
-        when(buyer.getBalance()).thenReturn(userBalance);
-
-        assertThrows(InsufficientFundsException.class, () -> sut.subtractBalance(buyer, transactionAmount));
-    }
-
-    @Test
-    @DisplayName("Throws RuntimeException if the amount to be added is negative.")
-    public void itShouldThrowIfAmountIsNegative() {
-        BigDecimal transactionAmount = BigDecimal.valueOf(-1);
-        User buyer = mock(User.class);
-
-        assertThrows(RuntimeException.class, () -> sut.addBalance(buyer, transactionAmount));
     }
 }

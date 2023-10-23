@@ -3,5 +3,5 @@ package com.lutzapi.application.dtos;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record CreateTransactionDTO(BigDecimal amount, UUID sellerId, UUID buyerId) {
+public record CreateTransactionDTO(UUID buyerId, UUID sellerId, BigDecimal amount) {
 }

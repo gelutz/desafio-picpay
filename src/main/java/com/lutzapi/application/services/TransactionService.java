@@ -10,12 +10,12 @@ import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.domain.exceptions.user.WrongUserTypeException;
 import com.lutzapi.infrastructure.repositories.TransactionRepository;
+import com.lutzapi.infrastructure.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -24,9 +24,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TransactionService {
     private TransactionRepository transactionRepository;
-    private UserService userService;
-    private FakeGateway apiAdapter;
-
+    private UserRepository userRepository;
+    private FakeGateway gateway;
 
     public Transaction findById(Long id) {
         return transactionRepository.findById(id)
@@ -34,7 +33,8 @@ public class TransactionService {
     }
 
     public List<Transaction> findAllByUserId(UUID userId) {
-        User user = userService.findById(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found", userId));
         return null;
 //        return transactionRepository.findAllByBuyerOrSeller(user);
     }
@@ -42,10 +42,10 @@ public class TransactionService {
     public Transaction saveTransaction(CreateTransactionDTO transaction) {
         validateTransactionFields(transaction);
 
-        User buyer = Optional.of(userService.findById(transaction.buyerId()))
-                .orElseThrow(() -> new NotFoundException("buyer", transaction.buyerId()));
-        User seller = Optional.of(userService.findById(transaction.sellerId()))
-                .orElseThrow(() -> new NotFoundException("seller", transaction.sellerId()));
+        User buyer = userRepository.findById(transaction.buyerId())
+                .orElseThrow(() -> new NotFoundException("User not found", transaction.buyerId()));
+        User seller = userRepository.findById(transaction.sellerId())
+                .orElseThrow(() -> new NotFoundException("User not found", transaction.sellerId()));
 
         if (buyer.getType() == UserType.SELLER)
             throw new WrongUserTypeException(buyer.getId());
@@ -54,12 +54,13 @@ public class TransactionService {
 
         if (validateTransaction()) {
             Transaction newTransaction = new Transaction();
+
+            buyer.subtractBalance(transaction.amount());
+            seller.addBalance(transaction.amount());
+
             newTransaction.setBuyer(buyer);
             newTransaction.setSeller(seller);
             newTransaction.setAmount(transaction.amount());
-
-            userService.subtractBalance(buyer, transaction.amount());
-            userService.addBalance(seller, transaction.amount());
 
             return transactionRepository.save(newTransaction);
         }
@@ -77,7 +78,7 @@ public class TransactionService {
     }
 
     public boolean validateTransaction() {
-        APIGatewayDTO response = apiAdapter.call();
+        APIGatewayDTO response = gateway.call();
         return response.message().equals("Autorizado");
     }
 }
