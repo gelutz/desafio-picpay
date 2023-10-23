@@ -1,6 +1,7 @@
 package com.lutzapi.domain.entities.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -58,6 +59,15 @@ public class User implements UserDetails {
     @Setter(AccessLevel.NONE)
     private Instant updatedAt;
 
+    public void subtractBalance(BigDecimal amount) {
+        if (getBalance().compareTo(amount) < 0) throw new InsufficientFundsException(getId());
+        setBalance(getBalance().subtract(amount));
+    }
+
+    public void addBalance(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) throw new RuntimeException("O valor não pode ser negativo/zero.");
+        setBalance(getBalance().add(amount));
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

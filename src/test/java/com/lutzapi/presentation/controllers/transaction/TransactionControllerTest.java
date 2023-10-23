@@ -45,7 +45,7 @@ class TransactionControllerTest {
     @WithMockUser
     void createTransaction() throws Exception {
         BigDecimal amount = BigDecimal.valueOf(1);
-        CreateTransactionDTO transactionDTO = new CreateTransactionDTO(amount, UUID.randomUUID(), UUID.randomUUID());
+        CreateTransactionDTO transactionDTO = new CreateTransactionDTO(UUID.randomUUID(), UUID.randomUUID(), amount);
         Transaction transactionMock = mock(Transaction.class);
 
         when(transactionMock.getId()).thenReturn(1L);

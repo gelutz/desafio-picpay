@@ -8,6 +8,7 @@ import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserType;
 import com.lutzapi.domain.exceptions.user.MissingDataException;
 import com.lutzapi.infrastructure.repositories.TransactionRepository;
+import com.lutzapi.infrastructure.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,13 +30,13 @@ public class TransactionServiceTest {
     @Mock
     private TransactionRepository transactionRepoMock;
     @Mock
-    private UserService userServiceMock;
+    private UserRepository userRepository;
     @Mock
     private FakeGateway adapterMock;
 
     @BeforeEach
     public void setUp() {
-        sut = new TransactionService(transactionRepoMock, userServiceMock, adapterMock);
+        sut = new TransactionService(transactionRepoMock, userRepository, adapterMock);
     }
 
     @Test
@@ -67,7 +68,7 @@ public class TransactionServiceTest {
     @Test
     @DisplayName("Deve retornar uma transaction se a API validar")
     public void itShouldReturnTransactionIfValidated() {
-        CreateTransactionDTO transactionDTO = new CreateTransactionDTO(BigDecimal.ONE, UUID.randomUUID(), UUID.randomUUID());
+        CreateTransactionDTO transactionDTO = new CreateTransactionDTO(UUID.randomUUID(), UUID.randomUUID(), BigDecimal.ONE);
 
         User buyer = mock(User.class);
         when(buyer.getId()).thenReturn(transactionDTO.buyerId());
@@ -79,8 +80,8 @@ public class TransactionServiceTest {
         when(seller.getBalance()).thenReturn(transactionDTO.amount());
         when(seller.getType()).thenReturn(UserType.SELLER);
 
-        when(userServiceMock.findById(transactionDTO.buyerId())).thenReturn(buyer);
-        when(userServiceMock.findById(transactionDTO.sellerId())).thenReturn(seller);
+        when(userRepository.findById(transactionDTO.buyerId())).thenReturn(Optional.of(buyer));
+        when(userRepository.findById(transactionDTO.sellerId())).thenReturn(Optional.of(seller));
         when(adapterMock.call()).thenReturn(new APIGatewayDTO("Autorizado"));
 
         when(transactionRepoMock.save(any(Transaction.class))).thenReturn(mock(Transaction.class));

@@ -5,10 +5,8 @@ import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserDTO;
 import com.lutzapi.domain.entities.user.UserType;
 import com.lutzapi.domain.exceptions.repository.NotFoundException;
-import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +18,8 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class UserService {
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private TransactionService transactionService;
+    UserRepository userRepository;
+    PasswordEncoder passwordEncoder;
 
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
@@ -65,26 +61,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void subtractBalance(User user, BigDecimal amount) {
-        if (user.getBalance().compareTo(amount) < 0) {
-            throw new InsufficientFundsException(user.getId());
-        }
-
-        user.setBalance(user.getBalance().subtract(amount));
-        userRepository.save(user);
-    }
-
-    public void addBalance(User user, BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new RuntimeException("O valor não pode ser negativo/zero.");
-        }
-
-        user.setBalance(user.getBalance().add(amount));
-        userRepository.save(user);
-    }
-
-    public void seed(int rows) {
-
+    public List<CreateTransactionDTO> seed(int rows) {
+        List<CreateTransactionDTO> transactions = new ArrayList<>();
         List<User> buyers = new ArrayList<>();
         List<User> sellers = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
@@ -95,16 +73,17 @@ public class UserService {
         }
 
         for (int i = 0; i < rows; i++) {
-            int randomFactor = (int) (Math.random() * rows);
+            int randomFactor = (int) (Math.random() * (rows / 2));
             CreateTransactionDTO transactionDTO = new CreateTransactionDTO(
-                    BigDecimal.valueOf(Math.random() * 10),
+                    buyers.get(randomFactor).getId(),
                     sellers.get(randomFactor).getId(),
-                    buyers.get(randomFactor).getId()
+                    BigDecimal.valueOf(Math.random() * 10)
             );
 
-            transactionService.saveTransaction(transactionDTO);
+            transactions.add(transactionDTO);
         }
 
+        return transactions;
     }
 
     private User createRandomUser() {
