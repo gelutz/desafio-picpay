@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -20,6 +21,8 @@ import java.util.UUID;
 public class UserService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
+
+    final Random random = new Random();
 
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
@@ -65,6 +68,7 @@ public class UserService {
         List<CreateTransactionDTO> transactions = new ArrayList<>();
         List<User> buyers = new ArrayList<>();
         List<User> sellers = new ArrayList<>();
+
         for (int i = 0; i < rows; i++) {
             User user = saveUser(createRandomUser());
 
@@ -73,7 +77,8 @@ public class UserService {
         }
 
         for (int i = 0; i < rows; i++) {
-            int randomFactor = (int) (Math.random() * (rows / 2));
+            int randomFactor = (int) (Math.random() * Math.min(buyers.size(), sellers.size()));
+
             CreateTransactionDTO transactionDTO = new CreateTransactionDTO(
                     buyers.get(randomFactor).getId(),
                     sellers.get(randomFactor).getId(),
@@ -89,7 +94,7 @@ public class UserService {
     private User createRandomUser() {
         List<UserType> types = List.of(UserType.SELLER, UserType.BUYER);
 
-        int randomFactor = (int) ((Math.random() * 100) * (Math.random() * 100));
+        int randomFactor = random.nextInt(13711);
 
         return User.builder()
                 .firstName("abc" + randomFactor)
@@ -98,7 +103,7 @@ public class UserService {
                 .type(types.get(randomFactor % 2))
                 .document("" + randomFactor)
                 .password((randomFactor * 2) + "")
-                .balance(BigDecimal.valueOf(Math.random() * 1000))
+                .balance(BigDecimal.valueOf(Math.random() * randomFactor))
                 .build();
 
     }
