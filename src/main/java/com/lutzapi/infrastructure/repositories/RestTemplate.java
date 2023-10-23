@@ -1,4 +1,4 @@
-package com.lutzapi.infrastructure.repositories.templates;
+package com.lutzapi.infrastructure.repositories;
 
 import org.springframework.stereotype.Component;
 

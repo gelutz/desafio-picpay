@@ -2,7 +2,7 @@ package com.lutzapi.application.gateways;
 
 import com.lutzapi.domain.exceptions.mocky.MockyAuthException;
 import com.lutzapi.domain.exceptions.mocky.MockyDefaultExceptin;
-import com.lutzapi.infrastructure.repositories.templates.RestTemplate;
+import com.lutzapi.infrastructure.repositories.RestTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
