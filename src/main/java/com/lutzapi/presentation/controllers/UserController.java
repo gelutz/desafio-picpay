@@ -1,8 +1,8 @@
 package com.lutzapi.presentation.controllers;
 
-import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.application.services.UserService;
 import com.lutzapi.domain.entities.user.User;
+import com.lutzapi.domain.entities.user.UserDTO;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,7 +33,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        return userService.createUser(user);
+        return userService.saveUser(user);
     }
 
     @ResponseStatus(HttpStatus.OK)

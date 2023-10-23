@@ -42,19 +42,19 @@ class TransactionControllerTest {
 
     @Test
     @DisplayName("Should return the created transaction")
-    @WithMockUser(username = "admin", password = "123")
+    @WithMockUser
     void createTransaction() throws Exception {
         BigDecimal amount = BigDecimal.valueOf(1);
-        CreateTransactionDTO createTransactionDTO = new CreateTransactionDTO(amount, UUID.randomUUID(), UUID.randomUUID());
+        CreateTransactionDTO transactionDTO = new CreateTransactionDTO(amount, UUID.randomUUID(), UUID.randomUUID());
         Transaction transactionMock = mock(Transaction.class);
 
         when(transactionMock.getId()).thenReturn(1L);
         when(transactionMock.getAmount()).thenReturn(amount);
         when(transactionService.validateTransaction()).thenReturn(true);
-        when(transactionService.createTransaction(createTransactionDTO)).thenReturn(transactionMock);
+        when(transactionService.saveTransaction(transactionDTO)).thenReturn(transactionMock);
 
         ObjectMapper om = new ObjectMapper();
-        String jsonTransaction = om.writeValueAsString(createTransactionDTO);
+        String jsonTransaction = om.writeValueAsString(transactionDTO);
         this.mockMvc.perform(post("/transactions")
                         .content(jsonTransaction)
                         .contentType(MediaType.APPLICATION_JSON))

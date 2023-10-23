@@ -1,7 +1,7 @@
 package com.lutzapi.application.services;
 
-import com.lutzapi.application.dtos.UserDTO;
 import com.lutzapi.domain.entities.user.User;
+import com.lutzapi.domain.entities.user.UserDTO;
 import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.domain.exceptions.user.InsufficientFundsException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
@@ -80,7 +80,7 @@ public class UserServiceTest {
         when(userMock.getEmail()).thenReturn(email);
         when(userRepoMock.save(any(User.class))).thenReturn(userMock);
 
-        User response = sut.createUser(userMock);
+        User response = sut.saveUser(userMock);
 
         assertInstanceOf(User.class, response);
         assertEquals(response.getEmail(), email);
