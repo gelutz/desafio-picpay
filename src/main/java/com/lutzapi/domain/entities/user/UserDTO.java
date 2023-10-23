@@ -1,6 +1,5 @@
-package com.lutzapi.application.dtos;
+package com.lutzapi.domain.entities.user;
 
-import com.lutzapi.domain.entities.user.UserType;
 import lombok.Builder;
 
 import java.math.BigDecimal;
