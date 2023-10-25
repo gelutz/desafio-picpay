@@ -18,9 +18,9 @@ public class TransactionController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @GetMapping()
-    public List<Transaction> transactionHistory(@RequestBody UUID userId) {
-        return transactionService.findAllByUserId(userId);
+    @GetMapping("/{id}")
+    public Transaction findTransaction(@PathVariable Long id) {
+        return transactionService.findById(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -28,5 +28,12 @@ public class TransactionController {
     @PostMapping
     public Transaction createTransaction(@RequestBody CreateTransactionDTO transaction) {
         return transactionService.saveTransactionFromDTO(transaction);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @GetMapping("/history/{userId}")
+    public List<Transaction> history(@PathVariable UUID userId) {
+        return transactionService.findAllByUserId(userId);
     }
 }
