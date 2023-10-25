@@ -27,6 +27,6 @@ public class TransactionController {
     @ResponseBody
     @PostMapping
     public Transaction createTransaction(@RequestBody CreateTransactionDTO transaction) {
-        return transactionService.saveTransaction(transaction);
+        return transactionService.saveTransactionFromDTO(transaction);
     }
 }

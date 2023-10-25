@@ -4,6 +4,7 @@ import com.lutzapi.application.dtos.CreateTransactionDTO;
 import com.lutzapi.application.gateways.APIGatewayDTO;
 import com.lutzapi.application.gateways.FakeGateway;
 import com.lutzapi.domain.entities.transaction.Transaction;
+import com.lutzapi.domain.entities.transaction.TransactionDTO;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserType;
 import com.lutzapi.domain.exceptions.repository.NotFoundException;
@@ -39,33 +40,38 @@ public class TransactionService {
 //        return transactionRepository.findAllByBuyerOrSeller(user);
     }
 
-    public Transaction saveTransaction(CreateTransactionDTO transaction) {
-        validateTransactionFields(transaction);
-
-        User buyer = userRepository.findById(transaction.buyerId())
-                .orElseThrow(() -> new NotFoundException("User not found", transaction.buyerId()));
-        User seller = userRepository.findById(transaction.sellerId())
-                .orElseThrow(() -> new NotFoundException("User not found", transaction.sellerId()));
-
-        if (buyer.getType() == UserType.SELLER)
-            throw new WrongUserTypeException(buyer.getId());
-        if (seller.getType() != UserType.SELLER)
-            throw new WrongUserTypeException(buyer.getId());
+    public Transaction saveTransaction(TransactionDTO transaction) {
+        if (transaction.buyer().getType() == UserType.SELLER)
+            throw new WrongUserTypeException(transaction.buyer().getId());
+        if (transaction.seller().getType() != UserType.SELLER)
+            throw new WrongUserTypeException(transaction.seller().getId());
 
         if (validateTransaction()) {
             Transaction newTransaction = new Transaction();
 
-            buyer.subtractBalance(transaction.amount());
-            seller.addBalance(transaction.amount());
+            transaction.buyer().subtractBalance(transaction.amount());
+            transaction.seller().addBalance(transaction.amount());
 
-            newTransaction.setBuyer(buyer);
-            newTransaction.setSeller(seller);
+            newTransaction.setBuyer(transaction.buyer());
+            newTransaction.setSeller(transaction.seller());
             newTransaction.setAmount(transaction.amount());
 
             return transactionRepository.save(newTransaction);
         }
 
         return null;
+    }
+
+    public Transaction saveTransactionFromDTO(CreateTransactionDTO transaction) {
+        validateTransactionFields(transaction);
+
+        User buyer = userRepository.findById(transaction.buyerId())
+                .orElseThrow(() -> new NotFoundException("User not found", transaction.buyerId()));
+        User seller = userRepository.findById(transaction.sellerId())
+                .orElseThrow(() -> new NotFoundException("User not found", transaction.sellerId()));
+        TransactionDTO dto = new TransactionDTO(buyer, seller, transaction.amount());
+
+        return saveTransaction(dto);
     }
 
     public void validateTransactionFields(CreateTransactionDTO transaction) {
