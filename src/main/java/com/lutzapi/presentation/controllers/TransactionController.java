@@ -1,6 +1,7 @@
 package com.lutzapi.presentation.controllers;
 
 import com.lutzapi.application.dtos.CreateTransactionDTO;
+import com.lutzapi.application.dtos.TransactionByUserDTO;
 import com.lutzapi.application.services.TransactionService;
 import com.lutzapi.domain.entities.transaction.Transaction;
 import lombok.AllArgsConstructor;
@@ -33,7 +34,7 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @GetMapping("/history/{userId}")
-    public List<Transaction> history(@PathVariable UUID userId) {
+    public List<TransactionByUserDTO> history(@PathVariable UUID userId) {
         return transactionService.findAllByUserId(userId);
     }
 }

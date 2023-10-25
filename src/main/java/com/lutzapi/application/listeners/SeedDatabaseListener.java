@@ -25,7 +25,7 @@ public class SeedDatabaseListener {
             long start = System.currentTimeMillis();
             seedDatabaseService.seed(500);
             long end = System.currentTimeMillis();
-            System.out.println(end - start + "ms");
+            logger.info("Seeding took: " + (end - start) + "ms");
         }
     }
 }
