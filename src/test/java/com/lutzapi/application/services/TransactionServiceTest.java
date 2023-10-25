@@ -54,10 +54,10 @@ public class TransactionServiceTest {
     @Test
     @DisplayName("Deve lançar uma MissingDataException com cada campo que falta (buyerId, sellerId, amount)")
     public void itShouldThrowIfMissingData() {
-        CreateTransactionDTO transactionDTO = new CreateTransactionDTO(null, null, null);
+        CreateTransactionDTO createTransactionDTO = new CreateTransactionDTO(null, null, null);
 
         MissingDataException exception = assertThrows(MissingDataException.class,
-                () -> sut.validateTransactionFields(transactionDTO));
+                () -> sut.validateTransactionFields(createTransactionDTO));
 
         assertTrue(exception.getFields().contains("Amount"));
         assertTrue(exception.getFields().contains("Buyer ID"));
@@ -68,24 +68,24 @@ public class TransactionServiceTest {
     @Test
     @DisplayName("Deve retornar uma transaction se a API validar")
     public void itShouldReturnTransactionIfValidated() {
-        CreateTransactionDTO transactionDTO = new CreateTransactionDTO(UUID.randomUUID(), UUID.randomUUID(), BigDecimal.ONE);
+        CreateTransactionDTO createTransactionDTO = new CreateTransactionDTO(UUID.randomUUID(), UUID.randomUUID(), BigDecimal.ONE);
 
         User buyer = mock(User.class);
-        when(buyer.getId()).thenReturn(transactionDTO.buyerId());
-        when(buyer.getBalance()).thenReturn(transactionDTO.amount());
+        when(buyer.getId()).thenReturn(createTransactionDTO.buyerId());
+        when(buyer.getBalance()).thenReturn(createTransactionDTO.amount());
         when(buyer.getType()).thenReturn(UserType.BUYER);
 
         User seller = mock(User.class);
-        when(seller.getId()).thenReturn(transactionDTO.sellerId());
-        when(seller.getBalance()).thenReturn(transactionDTO.amount());
+        when(seller.getId()).thenReturn(createTransactionDTO.sellerId());
+        when(seller.getBalance()).thenReturn(createTransactionDTO.amount());
         when(seller.getType()).thenReturn(UserType.SELLER);
 
-        when(userRepository.findById(transactionDTO.buyerId())).thenReturn(Optional.of(buyer));
-        when(userRepository.findById(transactionDTO.sellerId())).thenReturn(Optional.of(seller));
+        when(userRepository.findById(createTransactionDTO.buyerId())).thenReturn(Optional.of(buyer));
+        when(userRepository.findById(createTransactionDTO.sellerId())).thenReturn(Optional.of(seller));
         when(adapterMock.call()).thenReturn(new APIGatewayDTO("Autorizado"));
 
         when(transactionRepoMock.save(any(Transaction.class))).thenReturn(mock(Transaction.class));
-        Transaction response = sut.saveTransaction(transactionDTO);
+        Transaction response = sut.saveTransactionFromDTO(createTransactionDTO);
 
         assertInstanceOf(Transaction.class, response);
     }

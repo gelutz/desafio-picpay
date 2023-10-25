@@ -37,4 +37,12 @@ public class Transaction {
     @UpdateTimestamp
     @Setter(AccessLevel.NONE)
     private Instant updatedAt;
+
+    public static Transaction fromDTO(TransactionDTO dto) {
+        return builder()
+                .buyer(dto.buyer())
+                .seller(dto.seller())
+                .amount(dto.amount())
+                .build();
+    }
 }

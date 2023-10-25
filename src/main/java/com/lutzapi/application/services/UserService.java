@@ -1,19 +1,13 @@
 package com.lutzapi.application.services;
 
-import com.lutzapi.application.dtos.CreateTransactionDTO;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserDTO;
-import com.lutzapi.domain.entities.user.UserType;
 import com.lutzapi.domain.exceptions.repository.NotFoundException;
 import com.lutzapi.infrastructure.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -22,7 +16,6 @@ public class UserService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
 
-    final Random random = new Random();
 
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
@@ -39,7 +32,8 @@ public class UserService {
     }
 
     public User saveUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getPassword() != null)
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepository.save(user);
     }
@@ -62,49 +56,5 @@ public class UserService {
             user.setType(userData.type());
 
         return userRepository.save(user);
-    }
-
-    public List<CreateTransactionDTO> seed(int rows) {
-        List<CreateTransactionDTO> transactions = new ArrayList<>();
-        List<User> buyers = new ArrayList<>();
-        List<User> sellers = new ArrayList<>();
-
-        for (int i = 0; i < rows; i++) {
-            User user = saveUser(createRandomUser());
-
-            if (user.getType() == UserType.SELLER) sellers.add(user);
-            if (user.getType() == UserType.BUYER) buyers.add(user);
-        }
-
-        for (int i = 0; i < rows; i++) {
-            int randomFactor = (int) (Math.random() * Math.min(buyers.size(), sellers.size()));
-
-            CreateTransactionDTO transactionDTO = new CreateTransactionDTO(
-                    buyers.get(randomFactor).getId(),
-                    sellers.get(randomFactor).getId(),
-                    BigDecimal.valueOf(Math.random() * 10)
-            );
-
-            transactions.add(transactionDTO);
-        }
-
-        return transactions;
-    }
-
-    private User createRandomUser() {
-        List<UserType> types = List.of(UserType.SELLER, UserType.BUYER);
-
-        int randomFactor = random.nextInt(13711);
-
-        return User.builder()
-                .firstName("abc" + randomFactor)
-                .lastName("cba" + randomFactor)
-                .email("mock" + randomFactor + "@example.com")
-                .type(types.get(randomFactor % 2))
-                .document("" + randomFactor)
-                .password((randomFactor * 2) + "")
-                .balance(BigDecimal.valueOf(Math.random() * randomFactor))
-                .build();
-
     }
 }

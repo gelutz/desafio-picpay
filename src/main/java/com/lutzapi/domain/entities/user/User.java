@@ -60,13 +60,24 @@ public class User implements UserDetails {
     private Instant updatedAt;
 
     public void subtractBalance(BigDecimal amount) {
-        if (getBalance().compareTo(amount) < 0) throw new InsufficientFundsException(getId());
+        if (getBalance().compareTo(amount) < 0) throw new InsufficientFundsException(getId(), amount, getBalance());
         setBalance(getBalance().subtract(amount));
     }
 
     public void addBalance(BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) throw new RuntimeException("O valor não pode ser negativo/zero.");
         setBalance(getBalance().add(amount));
+    }
+
+    public static User fromDTO(UserDTO dto) {
+        return builder()
+                .firstName(dto.firstName())
+                .lastName(dto.lastName())
+                .email(dto.email())
+                .type(dto.type())
+                .document(dto.document())
+                .balance(dto.balance())
+                .build();
     }
 
     @Override
