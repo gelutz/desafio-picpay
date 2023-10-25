@@ -1,6 +1,7 @@
 package com.lutzapi.application.services;
 
 import com.lutzapi.application.dtos.CreateTransactionDTO;
+import com.lutzapi.application.dtos.TransactionByUserDTO;
 import com.lutzapi.application.gateways.APIGatewayDTO;
 import com.lutzapi.application.gateways.FakeGateway;
 import com.lutzapi.domain.entities.transaction.Transaction;
@@ -33,11 +34,11 @@ public class TransactionService {
                 .orElseThrow(() -> new NotFoundException("Buyer ID", id + ""));
     }
 
-    public List<Transaction> findAllByUserId(UUID userId) {
+    public List<TransactionByUserDTO> findAllByUserId(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found", userId));
-        return null;
-//        return transactionRepository.findAllByBuyerOrSeller(user);
+
+        return transactionRepository.findAllByBuyerOrSeller(user, user);
     }
 
     public Transaction saveTransaction(TransactionDTO transaction) {
