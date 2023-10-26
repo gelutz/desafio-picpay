@@ -16,7 +16,7 @@ public class SeedDatabaseListener {
 
     final SeedDatabaseService seedDatabaseService;
 
-    @Value("${lutzapi.seed}")
+    @Value("${lutzapi.seed:false}")
     private boolean seed;
 
     @EventListener
