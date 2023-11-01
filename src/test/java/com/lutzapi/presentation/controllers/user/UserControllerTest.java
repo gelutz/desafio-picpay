@@ -5,7 +5,6 @@ import com.lutzapi.application.services.UserService;
 import com.lutzapi.domain.entities.user.User;
 import com.lutzapi.domain.entities.user.UserDTO;
 import com.lutzapi.domain.exceptions.handlers.ControllerExceptionHandler;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +41,6 @@ public class UserControllerTest {
     private UserService userServiceMock;
     @Autowired
     private MockMvc mockMvc;
-
-    @BeforeAll
-    public static void setup() {
-
-    }
 
     @Test
     @DisplayName("The endpoint should return an empty list when there are no users")
