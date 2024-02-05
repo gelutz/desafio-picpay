@@ -34,7 +34,7 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @GetMapping("/history/{userId}")
-    public List<TransactionByUserDTO> history(@PathVariable UUID userId) {
+    public List<Transaction> history(@PathVariable UUID userId) {
         return transactionService.findAllByUserId(userId);
     }
 }

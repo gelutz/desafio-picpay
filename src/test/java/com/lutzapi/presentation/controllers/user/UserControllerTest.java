@@ -53,6 +53,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("The endpoint should return a list of existing users")
     public void itShouldReturnAListOfUsers() throws Exception {
+
         User mockUser1 = mock(User.class);
         User mockUser2 = mock(User.class);
         UUID uuid1 = UUID.randomUUID();

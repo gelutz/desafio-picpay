@@ -30,11 +30,11 @@ public class TransactionService {
     private FakeGateway gateway;
 
     public Transaction findById(Long id) {
-        return transactionRepository.findById(id)
+        return transactionRepository.findByIdDeletedIsTrue(id)
                 .orElseThrow(() -> new NotFoundException("Buyer ID", id + ""));
     }
 
-    public List<TransactionByUserDTO> findAllByUserId(UUID userId) {
+    public List<Transaction> findAllByUserId(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found", userId));
 
@@ -87,5 +87,9 @@ public class TransactionService {
     public boolean validateTransaction() {
         APIGatewayDTO response = gateway.call();
         return response.message().equals("Autorizado");
+    }
+
+    public void deleteTransaction(Long id) {
+
     }
 }

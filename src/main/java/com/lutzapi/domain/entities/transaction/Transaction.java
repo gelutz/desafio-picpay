@@ -2,9 +2,9 @@ package com.lutzapi.domain.entities.transaction;
 
 import com.lutzapi.domain.entities.user.User;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -15,6 +15,7 @@ import java.time.Instant;
 @Table(name = "transactions")
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE table_product SET deleted = true WHERE id=?")
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +38,8 @@ public class Transaction {
     @UpdateTimestamp
     @Setter(AccessLevel.NONE)
     private Instant updatedAt;
+
+    private boolean deleted = false;
 
     public static Transaction fromDTO(TransactionDTO dto) {
         return builder()

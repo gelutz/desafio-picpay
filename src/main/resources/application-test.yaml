@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    username: lutz
+    url: jdbc:h2:mem:testdb
+    password: ''
+  main:
+    banner-mode: 'off'
+  jpa:
+    show-sql: 'true'
+logging:
+  file:
+    path: src/main/resources/log
+    name: src/main/resources/log/tests.log
+  level:
+    root: INFO
+mocky:
+  url: https://run.mocky.io/v3/5dc16e9f-b99b-4828-9c99-774c2a066bd7
+lutzapi:
+  seed: 'false'
