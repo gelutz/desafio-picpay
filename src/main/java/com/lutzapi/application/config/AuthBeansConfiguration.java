@@ -16,13 +16,13 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 @AllArgsConstructor
-public class AuthConfiguration {
+public class AuthBeansConfiguration {
     private final UserRepository userRepository;
 
     @Bean
     UserDetailsService userDetailsService() {
         return username -> userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Authentication failed for this user."));
+                                         .orElseThrow(() -> new UsernameNotFoundException("Authentication failed for this user."));
     }
 
     @Bean
