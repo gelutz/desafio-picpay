@@ -1,11 +1,14 @@
 package com.lutzapi.application.config;
 
 
+import com.lutzapi.application.dtos.JwtObjectDTO;
 import com.lutzapi.application.services.security.JwtService;
+import com.lutzapi.domain.entities.user.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,11 +24,11 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import java.io.IOException;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
-    private final HandlerExceptionResolver handlerExceptionResolver;
+    private JwtService jwtService;
+    private UserDetailsService userDetailsService;
+    private HandlerExceptionResolver handlerExceptionResolver;
 
     @Override
     protected void doFilterInternal(
@@ -43,16 +46,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             final String jwt = authHeader.substring(authHeader.indexOf(" ") + 1); // "Bearer <token>" ==> "<token>"
-            final String userEmail = jwtService.validateToken(jwt);
+            final JwtObjectDTO jwtObject = jwtService.parseAndValidate(jwt);
 
-            if (userEmail != null && authentication == null) {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+            if (jwtObject.getEmail() != null && authentication == null) {
+                User userDetails = (User) this.userDetailsService.loadUserByUsername(jwtObject.getEmail());
+                userDetails.setTenantId(jwtObject.getTenantId());
+
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
                         userDetails.getAuthorities()
                 );
+
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
             }

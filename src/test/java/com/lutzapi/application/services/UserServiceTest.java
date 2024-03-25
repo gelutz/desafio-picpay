@@ -44,8 +44,8 @@ public class UserServiceTest {
     public void itShouldReturnAListOfUsers() {
         User mockedUser1 = mock(User.class);
         User mockedUser2 = mock(User.class);
-        when(mockedUser1.getId()).thenReturn(UUID.randomUUID());
-        when(mockedUser2.getId()).thenReturn(UUID.randomUUID());
+//        when(mockedUser1.getId()).thenReturn(Long.randomLong()); TODO
+//        when(mockedUser2.getId()).thenReturn(Long.randomLong()); TODO
 
         List<User> users = new ArrayList<>();
         users.add(mockedUser1);
@@ -61,7 +61,7 @@ public class UserServiceTest {
     @DisplayName("Should return user with given id")
     public void itShouldReturnUserWithGivenId() {
         User mockedUser1 = mock(User.class);
-        when(mockedUser1.getId()).thenReturn(UUID.randomUUID());
+//        when(mockedUser1.getId()).thenReturn(UUID.randomUUID()); TODO
 
         when(userRepoMock.findById(any(UUID.class))).thenReturn(Optional.of(mockedUser1));
 
@@ -88,7 +88,7 @@ public class UserServiceTest {
     @Test
     @DisplayName("Should update the given data and keep older data intact, then return the user.")
     public void itShouldReturnUpdatedUser() {
-        UUID id = UUID.randomUUID();
+        Long id = 1L;
         User mockedUserBeforeUpdate = mock(User.class);
         when(userRepoMock.findById(id)).thenReturn(Optional.of(mockedUserBeforeUpdate));
 

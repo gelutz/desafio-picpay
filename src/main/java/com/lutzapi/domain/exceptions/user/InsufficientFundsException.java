@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class InsufficientFundsException extends RuntimeException {
-    public InsufficientFundsException(UUID userId) {
+    public InsufficientFundsException(Long userId) {
         super("O usuário de id " + userId + " não possui saldo suficiente.");
     }
 
-    public InsufficientFundsException(UUID userId, BigDecimal amount, BigDecimal balance) {
+    public InsufficientFundsException(Long userId, BigDecimal amount, BigDecimal balance) {
         super("O usuário de id " + userId + " não possui saldo suficiente. Amount: " + amount + "; Balance: " + balance);
     }
 }
